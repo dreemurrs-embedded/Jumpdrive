@@ -1,0 +1,48 @@
+#!/bin/sh
+
+################################################
+# Copyright (c) 2020 - Dreemurrs Embedded Labs #
+################################################
+
+. /init_functions.sh
+
+# Environment variables that we want:
+IP=172.16.42.1
+
+# Mount things needed by this script
+mount -t proc proc /proc
+mount -t sysfs sysfs /sys
+
+mkdir /config
+mount -t configfs -o nodev,noexec,nosuid configfs /config
+
+# /dev/pts (needed for telnet)
+mkdir -p /dev/pts
+mount -t devpts devpts /dev/pts
+
+# LED indicator for MMC r/w access
+echo mmc2 > /sys/class/leds/pinephone\:green\:user/trigger
+
+# Create all the symlinks to /bin/busybox
+echo "Installing Busybox..." && /bin/busybox --install -s
+
+# Create device nodes
+echo "Creating device nodes..."
+mknod /dev/null c 1 3
+mknod /dev/tty c 5 0
+mdev -s
+
+# Finishing rescue setup
+setup_usb_configfs
+start_udhcpd
+setup_telnetd
+
+# We'll just give some new lines cuz why not.
+printf "\n\n"
+
+echo "Rescue SD has initialized!"
+echo "Please connect the device to your computer."
+echo
+echo "* Telnet: $IP (port 23)"
+
+loop_forever
