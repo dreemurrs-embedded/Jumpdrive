@@ -30,8 +30,9 @@ mount -t configfs -o nodev,noexec,nosuid configfs /config
 mkdir -p /dev/pts
 mount -t devpts devpts /dev/pts
 
-# LED indicator for MMC r/w access
+# Amber LED indicator for MMC r/w access
 echo mmc2 > /sys/class/leds/pinephone\:green\:user/trigger
+echo mmc2 > /sys/class/leds/pinephone\:red\:user/trigger
 
 
 # Create device nodes
