@@ -1,3 +1,8 @@
+## SPDX-License-Identifier: GPL-2.0-only
+## Init functions for JumpDrive
+## Copyright (C) 2020 - postmarketOS
+## Copyright (C) 2020 - Danctl12 <danct12@disroot.org>
+
 setup_usb_configfs() {
 	# See: https://www.kernel.org/doc/Documentation/usb/gadget_configfs.txt
 	CONFIGFS=/config/usb_gadget
