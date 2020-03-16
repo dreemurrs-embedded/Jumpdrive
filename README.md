@@ -1,4 +1,4 @@
-# Rescue SD for PinePhone
+# Jumpdrive for PinePhone
 
 This image is a swiss army knife solution for **PinePhone eMMC**.
 
