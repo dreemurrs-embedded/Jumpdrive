@@ -8,9 +8,9 @@ setup_usb_configfs() {
 	fi
 
 	# Default values for USB-related deviceinfo variables
-	usb_idVendor="0x1F3A"
-	usb_idProduct="0xEFE8"
-	usb_serialnumber="Rescue SD Boot"
+	usb_idVendor="0x1209" # Generic
+	usb_idProduct="0x4201" # Random ID
+	usb_serialnumber="Jumpdrive"
 	usb_rndis_function="rndis.usb0"
 	usb_mass_storage_function="mass_storage.0"
 
@@ -45,8 +45,7 @@ setup_usb_configfs() {
 
 	# Make sure there is a mmcblk2 (eMMC)...
 	if [ -z "$(ls /dev/mmcblk2)" ]; then
-		echo "eMMC is not found, something is horribly wrong!!"
-		echo "It's probably better to make Huong Tram release a new music video."
+		echo "/dev/mmcblk2 could not be opened, possible eMMC defect"
 		crash_kernel
 	fi
 
@@ -61,8 +60,7 @@ setup_usb_configfs() {
 
 	# Check if there's an USB Device Controller
 	if [ -z "$(ls /sys/class/udc)" ]; then
-		echo "No USB Device Controller available, something is horribly wrong!!"
-		echo "Please let Danct12 know this."
+		echo "No USB Device Controller available"
 		crash_kernel
 	fi
 

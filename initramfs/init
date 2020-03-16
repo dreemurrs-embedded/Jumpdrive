@@ -1,8 +1,7 @@
 #!/bin/sh
-
-################################################
-# Copyright (c) 2020 - Dreemurrs Embedded Labs #
-################################################
+## Init script for JumpDrive
+## Copyright (C) 2020 - postmarketOS
+## Copyright (C) 2020 - Danctl12 <danct12@disroot.org>
 
 . /init_functions.sh
 
@@ -37,12 +36,6 @@ setup_usb_configfs
 start_udhcpd
 setup_telnetd
 
-# We'll just give some new lines cuz why not.
-printf "\n\n"
-
-echo "Rescue SD has initialized!"
-echo "Please connect the device to your computer."
-echo
-echo "* Telnet: $IP (port 23)"
+# ToDo: splash
 
 loop_forever
