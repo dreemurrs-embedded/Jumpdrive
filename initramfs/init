@@ -1,4 +1,6 @@
 #!/bin/sh
+
+## SPDX-License-Identifier: GPL-2.0-only
 ## Init script for JumpDrive
 ## Copyright (C) 2020 - postmarketOS
 ## Copyright (C) 2020 - Danctl12 <danct12@disroot.org>
