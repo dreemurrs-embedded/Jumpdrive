@@ -1,15 +1,25 @@
 #!/bin/sh
+## Init script for JumpDrive
+## Copyright (C) 2020 - postmarketOS
+## Copyright (C) 2020 - Danctl12 <danct12@disroot.org>
 
-################################################
-# Copyright (c) 2020 - Dreemurrs Embedded Labs #
-################################################
+echo "Welcome to JumpDrive"
 
 . /init_functions.sh
 
 # Environment variables that we want:
 IP=172.16.42.1
 
+# Create all the symlinks to /bin/busybox
+mkdir -p /usr/bin
+mkdir -p /sbin
+mkdir -p /usr/sbin
+echo "Installing Busybox..." && /bin/busybox --install -s
+
 # Mount things needed by this script
+mkdir /proc
+mkdir /sys
+mkdir /etc
 mount -t proc proc /proc
 mount -t sysfs sysfs /sys
 
@@ -20,11 +30,10 @@ mount -t configfs -o nodev,noexec,nosuid configfs /config
 mkdir -p /dev/pts
 mount -t devpts devpts /dev/pts
 
-# LED indicator for MMC r/w access
+# Amber LED indicator for MMC r/w access
 echo mmc2 > /sys/class/leds/pinephone\:green\:user/trigger
+echo mmc2 > /sys/class/leds/pinephone\:red\:user/trigger
 
-# Create all the symlinks to /bin/busybox
-echo "Installing Busybox..." && /bin/busybox --install -s
 
 # Create device nodes
 echo "Creating device nodes..."
@@ -37,12 +46,7 @@ setup_usb_configfs
 start_udhcpd
 setup_telnetd
 
-# We'll just give some new lines cuz why not.
-printf "\n\n"
-
-echo "Rescue SD has initialized!"
-echo "Please connect the device to your computer."
-echo
-echo "* Telnet: $IP (port 23)"
+gzip -c -d splash.ppm.gz > /splash.ppm
+fbsplash -s /splash.ppm
 
 loop_forever
