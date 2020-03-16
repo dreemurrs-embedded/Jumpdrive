@@ -3,12 +3,23 @@
 ## Copyright (C) 2020 - postmarketOS
 ## Copyright (C) 2020 - Danctl12 <danct12@disroot.org>
 
+echo "Welcome to JumpDrive"
+
 . /init_functions.sh
 
 # Environment variables that we want:
 IP=172.16.42.1
 
+# Create all the symlinks to /bin/busybox
+mkdir -p /usr/bin
+mkdir -p /sbin
+mkdir -p /usr/sbin
+echo "Installing Busybox..." && /bin/busybox --install -s
+
 # Mount things needed by this script
+mkdir /proc
+mkdir /sys
+mkdir /etc
 mount -t proc proc /proc
 mount -t sysfs sysfs /sys
 
@@ -22,8 +33,6 @@ mount -t devpts devpts /dev/pts
 # LED indicator for MMC r/w access
 echo mmc2 > /sys/class/leds/pinephone\:green\:user/trigger
 
-# Create all the symlinks to /bin/busybox
-echo "Installing Busybox..." && /bin/busybox --install -s
 
 # Create device nodes
 echo "Creating device nodes..."
@@ -36,6 +45,7 @@ setup_usb_configfs
 start_udhcpd
 setup_telnetd
 
-# ToDo: splash
+gzip -c -d splash.ppm.gz > /splash.ppm
+fbsplash -s /splash.ppm
 
 loop_forever
