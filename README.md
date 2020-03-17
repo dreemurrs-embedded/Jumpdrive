@@ -12,10 +12,19 @@ You can use this to flash a image **directly to eMMC**, troubleshooting a broken
 
 ## Building
 
-Run `make` inside this directory and it will build jumpdrive.img.xz that can be flashed to SD.
-
 The dependencies are:
 
 - aarch64-linux-gnu- toolchain
 - u-boot tools
 - mtools
+
+```shell-session
+$ make -j8 pine64-pinephone.img.xz
+Builds everything needed for the pinephone image...
+
+$ make -j8 initramfs-pine64-pinephone.gz
+Generate only the initramfs for the pinephone
+
+$ make -j8 all
+Generates an image for every supported platform in parallel
+```
