@@ -7,6 +7,9 @@
 
 echo "Welcome to JumpDrive"
 
+. /info.sh
+echo "Running on $PLATFORM"
+
 . /init_functions.sh
 
 # Environment variables that we want:
@@ -32,10 +35,10 @@ mount -t configfs -o nodev,noexec,nosuid configfs /config
 mkdir -p /dev/pts
 mount -t devpts devpts /dev/pts
 
-# Amber LED indicator for MMC r/w access
-echo mmc2 > /sys/class/leds/pinephone\:green\:user/trigger
-echo mmc2 > /sys/class/leds/pinephone\:red\:user/trigger
-
+# LED indicator for MMC r/w access
+if [ -n "$LED" ]; then
+	echo $TRIGGER > /sys/class/leds/$LED/trigger
+fi
 
 # Create device nodes
 echo "Creating device nodes..."

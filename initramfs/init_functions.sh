@@ -8,8 +8,7 @@ setup_usb_configfs() {
 	CONFIGFS=/config/usb_gadget
 
 	if ! [ -e "$CONFIGFS" ]; then
-		echo "$CONFIGFS does not exist, this is not good."
-		crash_kernel
+		fatal_error "$CONFIGFS does not exist"
 	fi
 
 	# Default values for USB-related deviceinfo variables
@@ -21,7 +20,7 @@ setup_usb_configfs() {
 
 	echo "Setting up an USB gadget through configfs..."
 	# Create an usb gadet configuration
-	mkdir $CONFIGFS/g1 || ( echo "Couldn't create $CONFIGFS/g1" ; crash_kernel )
+	mkdir $CONFIGFS/g1 || ( fatal_error "Couldn't create $CONFIGFS/g1" )
 	echo "$usb_idVendor"  > "$CONFIGFS/g1/idVendor"
 	echo "$usb_idProduct" > "$CONFIGFS/g1/idProduct"
 
@@ -48,14 +47,13 @@ setup_usb_configfs() {
 	echo "rndis" > $CONFIGFS/g1/configs/c.1/strings/0x409/configuration \
 		|| echo "  Couldn't write configration name"
 
-	# Make sure there is a mmcblk2 (eMMC)...
-	if [ -z "$(ls /dev/mmcblk2)" ]; then
-		echo "/dev/mmcblk2 could not be opened, possible eMMC defect"
-		crash_kernel
+	# Make sure the node for the eMMC exists
+	if [ -z "$(ls $EMMC)" ]; then
+		fatal_error "$EMMC could not be opened, possible eMMC defect"
 	fi
 
 	# Set up mass storage to internal EMMC
-	echo /dev/mmcblk2 > $CONFIGFS/g1/functions/"$usb_mass_storage_function"/lun.0/file
+	echo $EMMC > $CONFIGFS/g1/functions/"$usb_mass_storage_function"/lun.0/file
 
 	# Link the rndis/mass_storage instance to the configuration
 	ln -s $CONFIGFS/g1/functions/"$usb_rndis_function" $CONFIGFS/g1/configs/c.1 \
@@ -65,12 +63,11 @@ setup_usb_configfs() {
 
 	# Check if there's an USB Device Controller
 	if [ -z "$(ls /sys/class/udc)" ]; then
-		echo "No USB Device Controller available"
-		crash_kernel
+		fatal_error "No USB Device Controller available"
 	fi
 
 	# shellcheck disable=SC2005
-	echo "$(ls /sys/class/udc)" > $CONFIGFS/g1/UDC || ( echo "Couldn't write UDC." ; crash_kernel )
+	echo "$(ls /sys/class/udc)" > $CONFIGFS/g1/UDC || ( fatal_error "Couldn't write to UDC" )
 }
 
 setup_telnetd() {
@@ -124,11 +121,19 @@ start_udhcpd() {
 	udhcpd
 }
 
-crash_kernel() {
-	echo "panic: We're hanging here..."
-	# shellcheck disable=SC1001
-	echo panic > /sys/class/leds/pinephone\:red\:user/trigger
-	echo c > /proc/sysrq-trigger
+fatal_error() {
+	clear
+
+	# Move cursor into position for error message
+	echo -e "\033[$ERRORLINES;0H"
+
+	gzip -c -d error.ppm.gz > /error.ppm
+	fbsplash -s /error.ppm
+	
+	# Print the error message over the error splash
+	echo "  $1"
+
+	loop_forever
 }
 
 loop_forever() {
