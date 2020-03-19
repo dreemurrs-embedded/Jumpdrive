@@ -1,6 +1,6 @@
 setenv kernel_addr_z 0x44080000
 
-setenv bootargs loglevel=0 silent console=tty0
+setenv bootargs loglevel=0 silent console=tty0 vt.global_cursor_default=0
 
 gpio set 114
 
