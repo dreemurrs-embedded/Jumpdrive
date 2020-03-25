@@ -55,6 +55,9 @@ setup_usb_configfs() {
 	# Set up mass storage to internal EMMC
 	echo $EMMC > $CONFIGFS/g1/functions/"$usb_mass_storage_function"/lun.0/file
 
+	# Rename the mass storage device
+	echo "JumpDrive" > $CONFIGFS/g1/functions/"$usb_mass_storage_function"/lun.0/inquiry_string
+
 	# Link the rndis/mass_storage instance to the configuration
 	ln -s $CONFIGFS/g1/functions/"$usb_rndis_function" $CONFIGFS/g1/configs/c.1 \
 		|| echo "  Couldn't symlink $usb_rndis_function"
