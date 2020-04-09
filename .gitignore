@@ -4,6 +4,9 @@
 /initramfs-*
 /build
 /dtbs
+/src/linux-rockchip
+/src/u-boot
+/src/arm-trusted-firmware
 /*.scr
 /*.dtb
 /*.img.xz
