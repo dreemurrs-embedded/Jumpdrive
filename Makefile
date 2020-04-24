@@ -97,6 +97,7 @@ u-boot-sunxi-with-spl.bin:
 
 cleanfast:
 	@rm -rvf build
+	@rm -rvf initramfs-*/
 	@rm -vf *.img
 	@rm -vf *.img.xz
 	@rm -vf *.apk
