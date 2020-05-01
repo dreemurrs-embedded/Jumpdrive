@@ -9,7 +9,7 @@ pine64-pinephone.img: fat-pine64-pinephone.img u-boot-sunxi-with-spl.bin
 	parted -s $@ mktable msdos
 	parted -s $@ mkpart primary fat32 2048s 100%
 	parted -s $@ set 1 boot on
-	dd if=u-boot-sunxi-with-spl.bin of=$@ bs=8k seek=1
+	dd if=u-boot-sunxi-with-spl-pinephone.bin of=$@ bs=8k seek=1
 	dd if=fat-$@ of=$@ seek=1024 bs=1k
 
 fat-pine64-pinephone.img: initramfs-pine64-pinephone.gz kernel-sunxi.gz pine64-pinephone.scr dtbs/sunxi/sun50i-a64-pinephone.dtb
@@ -29,7 +29,7 @@ pine64-pinetab.img: fat-pine64-pinetab.img u-boot-sunxi-with-spl.bin
 	parted -s $@ mktable msdos
 	parted -s $@ mkpart primary fat32 2048s 100%
 	parted -s $@ set 1 boot on
-	dd if=u-boot-sunxi-with-spl.bin of=$@ bs=8k seek=1
+	dd if=u-boot-sunxi-with-spl-pinetab.bin of=$@ bs=8k seek=1
 	dd if=fat-$@ of=$@ seek=1024 bs=1k
 
 fat-pine64-pinetab.img: initramfs-pine64-pinetab.gz kernel-sunxi.gz pine64-pinetab.scr dtbs/sunxi/sun50i-a64-pinetab.dtb
@@ -88,8 +88,8 @@ kernel-sunxi.gz: src/linux_config
 	
 u-boot-sunxi-with-spl.bin:
 	@echo "WGET  $@"
-	@wget http://dl-cdn.alpinelinux.org/alpine/edge/main/aarch64/u-boot-pine64-2020.01-r0.apk
-	@tar -xvf u-boot-pine64-2020.01-r0.apk usr/share/u-boot/pine64-lts/u-boot-sunxi-with-spl.bin --strip-components 4
+	@wget -O uboot.zip https://gitlab.com/pine64-org/u-boot/-/jobs/artifacts/master/download?job=build
+	@unzip uboot.zip
 	
 
 
