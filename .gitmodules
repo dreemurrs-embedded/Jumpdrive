@@ -5,9 +5,3 @@
 	path = src/linux
 	url = https://gitlab.com/pine64-org/linux.git
 	branch = pine64-kernel-5.5.y
-[submodule "src/u-boot"]
-	path = src/u-boot
-	url = https://github.com/u-boot/u-boot
-[submodule "src/arm-trusted-firmware"]
-	path = src/arm-trusted-firmware
-	url = https://github.com/ARM-software/arm-trusted-firmware.git
