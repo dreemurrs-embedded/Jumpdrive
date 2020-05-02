@@ -1,7 +1,7 @@
 CROSS_FLAGS = ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu-
 CROSS_FLAGS_BOOT = CROSS_COMPILE=aarch64-linux-gnu-
 
-all: pine64-pinephone.img.xz pine64-pinetab.img.xz pine64-pinebookpro.img.xz
+all: pine64-pinephone.img.xz pine64-pinetab.img.xz
 
 
 pine64-pinephone.img: fat-pine64-pinephone.img u-boot-sunxi-with-spl.bin
@@ -94,14 +94,14 @@ initramfs-%.gz: initramfs-%.cpio
 	@echo "GZ    $@"
 	@gzip < $< > $@
 	
-kernel-sunxi.gz: src/linux_config_sunxi
-	@echo "MAKE  $@"
+kernel-sunxi.gz dtbs/sunxi/sun50i-a64-pinephone.dtb dtbs/sunxi/sun50i-a64-pinetab.dtb &: src/linux_config_sunxi
+	@echo "MAKE  kernel-sunxi.gz"
 	@mkdir -p build/linux-sunxi
 	@mkdir -p dtbs/sunxi
 	@cp src/linux_config_sunxi build/linux-sunxi/.config
 	@$(MAKE) -C src/linux O=../../build/linux-sunxi $(CROSS_FLAGS) olddefconfig
 	@$(MAKE) -C src/linux O=../../build/linux-sunxi $(CROSS_FLAGS)
-	@cp build/linux-sunxi/arch/arm64/boot/Image.gz $@
+	@cp build/linux-sunxi/arch/arm64/boot/Image.gz kernel-sunxi.gz
 	@cp build/linux-sunxi/arch/arm64/boot/dts/allwinner/*.dtb dtbs/sunxi/
 
 kernel-rockchip.gz: src/linux_config_rockchip src/linux-rockchip
