@@ -127,7 +127,7 @@ build/atf/sun50i_a64/bl31.bin: src/arm-trusted-firmware
 u-boot-sunxi-with-spl.bin: build/atf/sun50i_a64/bl31.bin src/u-boot
 	@echo "MAKE  $@"
 	@mkdir -p build/u-boot/sun50i_a64
-	@BL31=../../../build/atf/sun50i_a64/bl31.bin $(MAKE) -C src/u-boot O=../../build/u-boot/sun50i_a64 $(CROSS_FLAGS_BOOT) pine64-lts_defconfig
+	@BL31=../../../build/atf/sun50i_a64/bl31.bin $(MAKE) -C src/u-boot O=../../build/u-boot/sun50i_a64 $(CROSS_FLAGS_BOOT) pinephone_defconfig
 	@BL31=../../../build/atf/sun50i_a64/bl31.bin $(MAKE) -C src/u-boot O=../../build/u-boot/sun50i_a64 $(CROSS_FLAGS_BOOT) ARCH=arm all
 	@cp build/u-boot/sun50i_a64/u-boot-sunxi-with-spl.bin "$@"
 
@@ -159,8 +159,10 @@ src/arm-trusted-firmware:
 src/u-boot:
 	@echo "WGET  u-boot"
 	@mkdir src/u-boot
-	@wget ftp://ftp.denx.de/pub/u-boot/u-boot-2020.04-rc4.tar.bz2
-	@tar -xvf u-boot-2020.04-rc4.tar.bz2 --strip-components 1 -C src/u-boot
+	@wget ftp://ftp.denx.de/pub/u-boot/u-boot-2020.04.tar.bz2
+	@tar -xvf u-boot-2020.04.tar.bz2 --strip-components 1 -C src/u-boot
+	@cd src/u-boot && patch -p1 < ../u-boot-pinephone.patch
+
 
 .PHONY: clean cleanfast
 
