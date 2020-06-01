@@ -81,7 +81,7 @@ setup_telnetd() {
 	echo "Starting telnet daemon..."
 	{
 		echo "#!/bin/sh"
-		echo "echo \"Welcome to Rescue SD Shell!\""
+		echo "echo \"Welcome to Jumpdrive Shell!\""
 		echo "sh"
 	} >/telnet_connect.sh
 	chmod +x /telnet_connect.sh
