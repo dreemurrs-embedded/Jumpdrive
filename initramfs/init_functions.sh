@@ -128,6 +128,15 @@ start_udhcpd() {
 	udhcpd
 }
 
+start_serial_getty() {
+	if [ -n "$SERIAL_CON" ] && [ -n "$SERIAL_BAUD" ]; then
+		# Serial console isn't supposed to be quitted, so if task is finished, relaunch it.
+		sh -c "while true; do getty -l /bin/sh -n $SERIAL_BAUD $SERIAL_CON linux; done" &
+	else
+		echo "Not setting up serial shell, SERIAL_CON and/or SERIAL_BAUD is not defined."
+	fi
+}
+
 fatal_error() {
 	clear
 
