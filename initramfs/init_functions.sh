@@ -137,6 +137,32 @@ start_serial_getty() {
 	fi
 }
 
+flash_sd_image() {
+	echo "Flashing $1"
+	mkfifo /progress
+	fbsplash -s /splash.ppm -c -i /fbsplash.conf -f /progress &
+	echo 00 >/progress
+
+
+}
+
+check_and_fash_image() {
+	# If a file with a specific filename exists on the fat partition then flash it to eMMC
+	echo "Checking for flash.img.{xz,gz,}"
+	mkdir /sd
+	mount "$SD" /sd
+	if [ -e /sd/flash.img.xz ]; then
+		flash_sd_image /sd/flash.img.xz
+	fi
+	if [ -e /sd/flash.img.gz ]; then
+		flash_sd_image /sd/flash.img.gz
+	fi
+	if [ -e /sd/flash.img ]; then
+		flash_sd_image /sd/flash.img
+	fi
+	umount /sd
+}
+
 fatal_error() {
 	clear
 

@@ -6,7 +6,7 @@ all: pine64-pinephone.img.xz pine64-pinetab.img.xz
 
 pine64-pinephone.img: fat-pine64-pinephone.img u-boot-sunxi-with-spl.bin
 	rm -f $@
-	truncate --size 50M $@
+	truncate --size 2048M $@
 	parted -s $@ mktable msdos
 	parted -s $@ mkpart primary fat32 2048s 100%
 	parted -s $@ set 1 boot on
@@ -16,7 +16,7 @@ pine64-pinephone.img: fat-pine64-pinephone.img u-boot-sunxi-with-spl.bin
 fat-pine64-pinephone.img: initramfs-pine64-pinephone.gz kernel-sunxi.gz pine64-pinephone.scr dtbs/sunxi/sun50i-a64-pinephone.dtb
 	@echo "MKFS  $@"
 	@rm -f $@
-	@truncate --size 40M $@
+	@truncate --size 2038M $@
 	@mkfs.fat -F32 $@
 	
 	@mcopy -i $@ kernel-sunxi.gz ::Image.gz
@@ -26,7 +26,7 @@ fat-pine64-pinephone.img: initramfs-pine64-pinephone.gz kernel-sunxi.gz pine64-p
 
 pine64-pinetab.img: fat-pine64-pinetab.img u-boot-sunxi-with-spl.bin
 	rm -f $@
-	truncate --size 50M $@
+	truncate --size 2048M $@
 	parted -s $@ mktable msdos
 	parted -s $@ mkpart primary fat32 2048s 100%
 	parted -s $@ set 1 boot on
@@ -36,7 +36,7 @@ pine64-pinetab.img: fat-pine64-pinetab.img u-boot-sunxi-with-spl.bin
 fat-pine64-pinetab.img: initramfs-pine64-pinetab.gz kernel-sunxi.gz pine64-pinetab.scr dtbs/sunxi/sun50i-a64-pinetab.dtb
 	@echo "MKFS  $@"
 	@rm -f $@
-	@truncate --size 40M $@
+	@truncate --size 2038M $@
 	@mkfs.fat -F32 $@
 	
 	@mcopy -i $@ kernel-sunxi.gz ::Image.gz
@@ -46,7 +46,7 @@ fat-pine64-pinetab.img: initramfs-pine64-pinetab.gz kernel-sunxi.gz pine64-pinet
 
 pine64-pinebookpro.img: fat-pine64-pinebookpro.img u-boot-rk3399.bin
 	rm -f $@
-	truncate --size 50M $@
+	truncate --size 2048M $@
 	parted -s $@ mktable msdos
 	parted -s $@ mkpart primary fat32 32768s 100%
 	parted -s $@ set 1 boot on
@@ -56,7 +56,7 @@ pine64-pinebookpro.img: fat-pine64-pinebookpro.img u-boot-rk3399.bin
 fat-pine64-pinebookpro.img: initramfs-pine64-pinebookpro.gz kernel-rockchip.gz src/pine64-pinebookpro.conf dtbs/rockchip/rk3399-pinebook-pro.dtb
 	@echo "MKFS  $@"
 	@rm -f $@
-	@truncate --size 40M $@
+	@truncate --size 2038M $@
 	@mkfs.fat -F32 $@
 	
 	@mcopy -i $@ kernel-rockchip.gz ::Image.gz
