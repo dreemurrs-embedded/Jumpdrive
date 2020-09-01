@@ -4,4 +4,4 @@
 [submodule "src/linux"]
 	path = src/linux
 	url = https://gitlab.com/pine64-org/linux.git
-	branch = pine64-kernel-5.5.y
+	branch = pine64-kernel-5.7.y

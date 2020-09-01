@@ -13,14 +13,14 @@ pine64-pinephone.img: fat-pine64-pinephone.img u-boot-sunxi-with-spl.bin
 	dd if=u-boot-sunxi-with-spl.bin of=$@ bs=8k seek=1
 	dd if=fat-$@ of=$@ seek=1024 bs=1k
 
-fat-pine64-pinephone.img: initramfs-pine64-pinephone.gz kernel-sunxi.gz pine64-pinephone.scr dtbs/sunxi/sun50i-a64-pinephone.dtb
+fat-pine64-pinephone.img: initramfs-pine64-pinephone.gz kernel-sunxi.gz pine64-pinephone.scr dtbs/sunxi/sun50i-a64-pinephone-1.2.dtb
 	@echo "MKFS  $@"
 	@rm -f $@
 	@truncate --size 40M $@
 	@mkfs.fat -F32 $@
 	
 	@mcopy -i $@ kernel-sunxi.gz ::Image.gz
-	@mcopy -i $@ dtbs/sunxi/sun50i-a64-pinephone.dtb ::sun50i-a64-pinephone.dtb
+	@mcopy -i $@ dtbs/sunxi/sun50i-a64-pinephone-1.2.dtb ::sun50i-a64-pinephone-1.2.dtb
 	@mcopy -i $@ initramfs-pine64-pinephone.gz ::initramfs.gz
 	@mcopy -i $@ pine64-pinephone.scr ::boot.scr
 
@@ -94,7 +94,7 @@ initramfs-%.gz: initramfs-%.cpio
 	@echo "GZ    $@"
 	@gzip < $< > $@
 	
-kernel-sunxi.gz dtbs/sunxi/sun50i-a64-pinephone.dtb dtbs/sunxi/sun50i-a64-pinetab.dtb &: src/linux_config_sunxi
+kernel-sunxi.gz dtbs/sunxi/sun50i-a64-pinephone-1.2.dtb dtbs/sunxi/sun50i-a64-pinetab.dtb &: src/linux_config_sunxi
 	@echo "MAKE  kernel-sunxi.gz"
 	@mkdir -p build/linux-sunxi
 	@mkdir -p dtbs/sunxi
@@ -159,9 +159,10 @@ src/arm-trusted-firmware:
 src/u-boot:
 	@echo "WGET  u-boot"
 	@mkdir src/u-boot
-	@wget ftp://ftp.denx.de/pub/u-boot/u-boot-2020.04.tar.bz2
-	@tar -xvf u-boot-2020.04.tar.bz2 --strip-components 1 -C src/u-boot
+	@wget ftp://ftp.denx.de/pub/u-boot/u-boot-2020.07.tar.bz2
+	@tar -xvf u-boot-2020.07.tar.bz2 --strip-components 1 -C src/u-boot
 	@cd src/u-boot && patch -p1 < ../u-boot-pinephone.patch
+	@cd src/u-boot && patch -p1 < ../u-boot-pinephone-3gb.patch
 
 
 .PHONY: clean cleanfast
