@@ -1,7 +1,0 @@
-[submodule "src/busybox"]
-	path = src/busybox
-	url = git://git.busybox.net/busybox
-[submodule "src/linux"]
-	path = src/linux
-	url = https://gitlab.com/pine64-org/linux.git
-	branch = pine64-kernel-5.5.y
