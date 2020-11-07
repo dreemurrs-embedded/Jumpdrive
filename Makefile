@@ -94,7 +94,7 @@ initramfs-%.gz: initramfs-%.cpio
 	@echo "GZ    $@"
 	@gzip < $< > $@
 	
-kernel-sunxi.gz dtbs/sunxi/sun50i-a64-pinephone.dtb dtbs/sunxi/sun50i-a64-pinetab.dtb &: src/linux_config_sunxi
+kernel-sunxi.gz: src/linux_config_sunxi
 	@echo "MAKE  kernel-sunxi.gz"
 	@mkdir -p build/linux-sunxi
 	@mkdir -p dtbs/sunxi
@@ -103,6 +103,10 @@ kernel-sunxi.gz dtbs/sunxi/sun50i-a64-pinephone.dtb dtbs/sunxi/sun50i-a64-pineta
 	@$(MAKE) -C src/linux O=../../build/linux-sunxi $(CROSS_FLAGS)
 	@cp build/linux-sunxi/arch/arm64/boot/Image.gz kernel-sunxi.gz
 	@cp build/linux-sunxi/arch/arm64/boot/dts/allwinner/*.dtb dtbs/sunxi/
+
+dtbs/sunxi/sun50i-a64-pinephone.dtb: kernel-sunxi.gz
+
+dtbs/sunxi/sun50i-a64-pinetab.dtb: kernel-sunxi.gz
 
 kernel-rockchip.gz: src/linux_config_rockchip src/linux-rockchip
 	@echo "MAKE  $@"
