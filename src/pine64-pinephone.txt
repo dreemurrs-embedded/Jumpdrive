@@ -6,7 +6,7 @@ gpio set 114
 
 if load ${devtype} ${devnum}:${distro_bootpart} ${kernel_addr_z} /Image.gz; then
   unzip ${kernel_addr_z} ${kernel_addr_r}
-  if load ${devtype} ${devnum}:${distro_bootpart} ${fdt_addr_r} /sun50i-a64-pinephone.dtb; then
+  if load ${devtype} ${devnum}:${distro_bootpart} ${fdt_addr_r} /sun50i-a64-pinephone-1.2.dtb; then
     if load ${devtype} ${devnum}:${distro_bootpart} ${ramdisk_addr_r} /initramfs.gz; then
       booti ${kernel_addr_r} ${ramdisk_addr_r}:${filesize} ${fdt_addr_r};
     else

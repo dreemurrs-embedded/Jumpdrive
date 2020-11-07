@@ -13,14 +13,16 @@ pine64-pinephone.img: fat-pine64-pinephone.img u-boot-sunxi-with-spl.bin
 	dd if=u-boot-sunxi-with-spl.bin of=$@ bs=8k seek=1
 	dd if=fat-$@ of=$@ seek=1024 bs=1k
 
-fat-pine64-pinephone.img: initramfs-pine64-pinephone.gz kernel-sunxi.gz pine64-pinephone.scr dtbs/sunxi/sun50i-a64-pinephone.dtb
+fat-pine64-pinephone.img: initramfs-pine64-pinephone.gz kernel-sunxi.gz pine64-pinephone.scr dtbs/sunxi/sun50i-a64-pinephone-1.2.dtb
 	@echo "MKFS  $@"
 	@rm -f $@
 	@truncate --size 40M $@
 	@mkfs.fat -F32 $@
 	
 	@mcopy -i $@ kernel-sunxi.gz ::Image.gz
-	@mcopy -i $@ dtbs/sunxi/sun50i-a64-pinephone.dtb ::sun50i-a64-pinephone.dtb
+	@mcopy -i $@ dtbs/sunxi/sun50i-a64-pinephone-1.2.dtb ::sun50i-a64-pinephone-1.2.dtb
+	@mcopy -i $@ dtbs/sunxi/sun50i-a64-pinephone-1.1.dtb ::sun50i-a64-pinephone-1.1.dtb
+	@mcopy -i $@ dtbs/sunxi/sun50i-a64-pinephone-1.0.dtb ::sun50i-a64-pinephone-1.0.dtb
 	@mcopy -i $@ initramfs-pine64-pinephone.gz ::initramfs.gz
 	@mcopy -i $@ pine64-pinephone.scr ::boot.scr
 
@@ -94,17 +96,17 @@ initramfs-%.gz: initramfs-%.cpio
 	@echo "GZ    $@"
 	@gzip < $< > $@
 	
-kernel-sunxi.gz: src/linux_config_sunxi
+kernel-sunxi.gz: src/linux_config_sunxi src/linux-sunxi
 	@echo "MAKE  kernel-sunxi.gz"
 	@mkdir -p build/linux-sunxi
 	@mkdir -p dtbs/sunxi
 	@cp src/linux_config_sunxi build/linux-sunxi/.config
-	@$(MAKE) -C src/linux O=../../build/linux-sunxi $(CROSS_FLAGS) olddefconfig
-	@$(MAKE) -C src/linux O=../../build/linux-sunxi $(CROSS_FLAGS)
+	@$(MAKE) -C src/linux-sunxi O=../../build/linux-sunxi $(CROSS_FLAGS) olddefconfig
+	@$(MAKE) -C src/linux-sunxi O=../../build/linux-sunxi $(CROSS_FLAGS)
 	@cp build/linux-sunxi/arch/arm64/boot/Image.gz kernel-sunxi.gz
 	@cp build/linux-sunxi/arch/arm64/boot/dts/allwinner/*.dtb dtbs/sunxi/
 
-dtbs/sunxi/sun50i-a64-pinephone.dtb: kernel-sunxi.gz
+dtbs/sunxi/sun50i-a64-pinephone-1.2.dtb: kernel-sunxi.gz
 
 dtbs/sunxi/sun50i-a64-pinetab.dtb: kernel-sunxi.gz
 
@@ -154,6 +156,12 @@ src/linux-rockchip:
 	@wget https://gitlab.manjaro.org/tsys/linux-pinebook-pro/-/archive/v5.6/linux-pinebook-pro-v5.6.tar.gz
 	@tar -xvf linux-pinebook-pro-v5.6.tar.gz --strip-components 1 -C src/linux-rockchip
 
+src/linux-sunxi:
+	@echo "WGET  linux-sunxi"
+	@mkdir src/linux-sunxi
+	@wget https://github.com/megous/linux/archive/orange-pi-5.9-20201019-1553.tar.gz
+	@tar -xvf orange-pi-5.9-20201019-1553.tar.gz --strip-components 1 -C src/linux-sunxi
+
 src/arm-trusted-firmware:
 	@echo "WGET  arm-trusted-firmware"
 	@mkdir src/arm-trusted-firmware
@@ -167,6 +175,11 @@ src/u-boot:
 	@tar -xvf u-boot-2020.04.tar.bz2 --strip-components 1 -C src/u-boot
 	@cd src/u-boot && patch -p1 < ../u-boot-pinephone.patch
 
+src/busybox:
+	@echo "WGET  busybox"
+	@mkdir src/busybox
+	@wget https://www.busybox.net/downloads/busybox-1.32.0.tar.bz2
+	@tar -xvf busybox-1.32.0.tar.bz2 --strip-components 1 -C src/busybox
 
 .PHONY: clean cleanfast
 

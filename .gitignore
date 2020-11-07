@@ -5,6 +5,8 @@
 /build
 /dtbs
 /src/linux-rockchip
+/src/linux-sunxi
+/src/busybox
 /src/u-boot
 /src/arm-trusted-firmware
 /*.scr
