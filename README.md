@@ -25,19 +25,31 @@ The dependencies are:
 - aarch64-linux-gnu- toolchain
 - u-boot tools
 - mtools
+- bison
+- flex
+- swig
 
+To install the dependencies on a Debian-based system:
+```shell-session
+$ sudo apt-get install gcc-aarch64-linux-gnu u-boot-tools mtools bison flex swig
+```
+Download the projects to build:
 ```shell-session
 $ git submodule update --init --recursive
-Downloads the projects to build
+```
 
+Build everything needed for the pinephone image:
+```shell-session
 $ make -j8 pine64-pinephone.img.xz
-Builds everything needed for the pinephone image...
-
+```
+Generate only the initramfs for the pinephone:
+```shell-session
 $ make -j8 initramfs-pine64-pinephone.gz
-Generate only the initramfs for the pinephone
+```
 
+Generate an image for every supported platform:
+```shell-session
 $ make -j8 all
-Generates an image for every supported platform in parallel
 ```
 
 ### This project is built on:
