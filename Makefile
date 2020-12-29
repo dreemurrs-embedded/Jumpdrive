@@ -189,7 +189,7 @@ src/u-boot: u-boot-2020.04.tar.bz2
 	@echo "UNTAR u-boot"
 	@mkdir src/u-boot
 	@tar -xf u-boot-2020.04.tar.bz2 --strip-components 1 -C src/u-boot
-	@cd src/u-boot && patch -p1 < ../u-boot-pinephone.patch
+	@cd src/u-boot && patch -p1 < ../u-boot-pinephone.patch && patch -p1 -i ../0001-isun50i-a64-Add-PinePhone-DTS-and-defconfig.patch
 
 busybox-1.32.0.tar.bz2:
 	@echo "WGET  busybox"
