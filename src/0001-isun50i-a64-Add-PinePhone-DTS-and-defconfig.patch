@@ -38,7 +38,7 @@ index 0000000000..dc4ab6b434
 +/dts-v1/;
 +
 +#include "sun50i-a64.dtsi"
-+#include "sun50i-a64-cpu-opp.dtsi"
++/* #include "sun50i-a64-cpu-opp.dtsi" */
 +
 +#include <dt-bindings/gpio/gpio.h>
 +#include <dt-bindings/input/input.h>
@@ -74,7 +74,7 @@ index 0000000000..dc4ab6b434
 +		#address-cells = <1>;
 +		#size-cells = <0>;
 +
-+		/* Rear camera */
++		/* Rear camera */ /*
 +		ov5640: camera@3c {
 +			compatible = "ovti,ov5640";
 +			reg = <0x3c>;
@@ -86,20 +86,20 @@ index 0000000000..dc4ab6b434
 +			AVDD-supply = <&reg_dldo3>;
 +			DOVDD-supply = <&reg_aldo1>;
 +			DVDD-supply = <&reg_eldo3>;
-+			reset-gpios = <&pio 4 14 GPIO_ACTIVE_LOW>; /* PE14 */
-+			powerdown-gpios = <&pio 4 15 GPIO_ACTIVE_HIGH>; /* PE15 */
++			reset-gpios = <&pio 4 14 GPIO_ACTIVE_LOW>; /* PE14 */ /*
++			powerdown-gpios = <&pio 4 15 GPIO_ACTIVE_HIGH>; /* PE15 */ /*
 +
 +			port {
 +				ov5640_ep: endpoint {
 +					remote-endpoint = <&csi_ep>;
 +					bus-width = <8>;
-+					hsync-active = <1>; /* Active high */
-+					vsync-active = <0>; /* Active low */
-+					data-active = <1>;  /* Active high */
-+					pclk-sample = <1>;  /* Rising */
++					hsync-active = <1>; /* Active high */ /*
++					vsync-active = <0>; /* Active low */ /*
++					data-active = <1>;  /* Active high */ /*
++					pclk-sample = <1>;  /* Rising */ /*
 +				};
 +			};
-+		};
++		}; */
 +	};
 +
 +	speaker_amp: audio-amplifier {
@@ -124,14 +124,14 @@ index 0000000000..dc4ab6b434
 +	};
 +};
 +
-+&codec {
++/* &codec {
 +	status = "okay";
 +};
 +
 +&codec_analog {
 +	cpvdd-supply = <&reg_eldo1>;
 +	status = "okay";
-+};
++}; */
 +
 +&cpu0 {
 +	cpu-supply = <&reg_dcdc2>;
@@ -149,7 +149,7 @@ index 0000000000..dc4ab6b434
 +	cpu-supply = <&reg_dcdc2>;
 +};
 +
-+&csi {
++/* &csi {
 +	status = "okay";
 +
 +	port {
@@ -159,10 +159,10 @@ index 0000000000..dc4ab6b434
 +		csi_ep: endpoint {
 +			remote-endpoint = <&ov5640_ep>;
 +			bus-width = <8>;
-+			hsync-active = <1>; /* Active high */
-+			vsync-active = <0>; /* Active low */
-+			data-active = <1>;  /* Active high */
-+			pclk-sample = <1>;  /* Rising */
++			hsync-active = <1>; /* Active high */ /*
++			vsync-active = <0>; /* Active low */ /*
++			data-active = <1>;  /* Active high */ /*
++			pclk-sample = <1>;  /* Rising */ /*
 +		};
 +	};
 +};
@@ -189,10 +189,10 @@ index 0000000000..dc4ab6b434
 +		avdd-supply = <&reg_dc1sw>;
 +		dvdd-supply = <&reg_dc1sw>;
 +		cvdd-supply = <&reg_ldo_io1>;
-+		reset-gpios = <&pio 3 24 GPIO_ACTIVE_HIGH>; /* PD24 */
++		reset-gpios = <&pio 3 24 GPIO_ACTIVE_HIGH>; /* PD24 */ /*
 +		backlight = <&backlight>;
 +	};
-+};
++}; */
 +
 +&ehci0 {
 +	status = "okay";
@@ -226,7 +226,7 @@ index 0000000000..dc4ab6b434
 +	/* TODO: add Bochs BMA223 accelerometer here */
 +};
 +
-+&lradc {
++/* &lradc {
 +	vref-supply = <&reg_aldo3>;
 +	status = "okay";
 +
@@ -243,7 +243,7 @@ index 0000000000..dc4ab6b434
 +		channel = <0>;
 +		voltage = <400000>;
 +	};
-+};
++}; */
 +
 +&mixer1 {
 +	status = "okay";
@@ -307,13 +307,13 @@ index 0000000000..dc4ab6b434
 +
 +#include "axp803.dtsi"
 +
-+&ac_power_supply {
++/* &ac_power_supply {
 +	status = "okay";
 +};
 +
 +&battery_power_supply {
 +	status = "okay";
-+};
++}; */
 +
 +&reg_aldo1 {
 +	regulator-min-microvolt = <2800000>;
@@ -353,7 +353,7 @@ index 0000000000..dc4ab6b434
 +	regulator-name = "vdd-cpux";
 +};
 +
-+/* DCDC3 is polyphased with DCDC2 */
++/* DCDC3 is polyphased with DCDC2 */ /*
 +
 +&reg_dcdc5 {
 +	regulator-always-on;
@@ -444,7 +444,7 @@ index 0000000000..dc4ab6b434
 +	regulator-name = "vcc-rtc";
 +};
 +
-+&sound {
++/* &sound {
 +	status = "okay";
 +	simple-audio-card,aux-devs = <&codec_analog>, <&speaker_amp>;
 +	simple-audio-card,widgets = "Microphone", "Internal Microphone Left",
@@ -465,7 +465,7 @@ index 0000000000..dc4ab6b434
 +			"MIC1", "Internal Microphone Left",
 +			"Internal Microphone Right", "HBIAS",
 +			"MIC2", "Internal Microphone Right";
-+};
++}; */
 +
 +&uart0 {
 +	pinctrl-names = "default";
@@ -478,17 +478,17 @@ index 0000000000..dc4ab6b434
 +	status = "okay";
 +};
 +
-+&usb_power_supply {
++/* &usb_power_supply {
 +	status = "okay";
 +};
 +
 +&usbphy {
-+	usb0_id_det-gpios = <&pio 7 9 GPIO_ACTIVE_HIGH>; /* PH9 */
++	usb0_id_det-gpios = <&pio 7 9 GPIO_ACTIVE_HIGH>; /* PH9 */ /*
 +	usb0_vbus_power-supply = <&usb_power_supply>;
 +	usb0_vbus-supply = <&reg_drivevbus>;
 +	usb1_vbus-supply = <&reg_ldo_io0>;
 +	status = "okay";
-+};
++}; */
 diff --git a/configs/pinetab_defconfig b/configs/pinetab_defconfig
 new file mode 100644
 index 0000000000..350465a425

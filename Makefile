@@ -4,13 +4,13 @@ CROSS_FLAGS_BOOT = CROSS_COMPILE=aarch64-linux-gnu-
 all: pine64-pinephone.img.xz pine64-pinetab.img.xz
 
 
-pine64-pinephone.img: fat-pine64-pinephone.img u-boot-sunxi-with-spl.bin
+pine64-pinephone.img: fat-pine64-pinephone.img u-boot-sunxi-with-spl-pinephone.bin
 	rm -f $@
 	truncate --size 50M $@
 	parted -s $@ mktable msdos
 	parted -s $@ mkpart primary fat32 2048s 100%
 	parted -s $@ set 1 boot on
-	dd if=u-boot-sunxi-with-spl.bin of=$@ bs=8k seek=1
+	dd if=u-boot-sunxi-with-spl-pinephone.bin of=$@ bs=8k seek=1
 	dd if=fat-$@ of=$@ seek=1024 bs=1k
 
 fat-pine64-pinephone.img: initramfs-pine64-pinephone.gz kernel-sunxi.gz pine64-pinephone.scr dtbs/sunxi/sun50i-a64-pinephone-1.2.dtb
@@ -26,13 +26,13 @@ fat-pine64-pinephone.img: initramfs-pine64-pinephone.gz kernel-sunxi.gz pine64-p
 	@mcopy -i $@ initramfs-pine64-pinephone.gz ::initramfs.gz
 	@mcopy -i $@ pine64-pinephone.scr ::boot.scr
 
-pine64-pinetab.img: fat-pine64-pinetab.img u-boot-sunxi-with-spl.bin
+pine64-pinetab.img: fat-pine64-pinetab.img u-boot-sunxi-with-spl-pinetab.bin
 	rm -f $@
 	truncate --size 50M $@
 	parted -s $@ mktable msdos
 	parted -s $@ mkpart primary fat32 2048s 100%
 	parted -s $@ set 1 boot on
-	dd if=u-boot-sunxi-with-spl.bin of=$@ bs=8k seek=1
+	dd if=u-boot-sunxi-with-spl-pinetab.bin of=$@ bs=8k seek=1
 	dd if=fat-$@ of=$@ seek=1024 bs=1k
 
 fat-pine64-pinetab.img: initramfs-pine64-pinetab.gz kernel-sunxi.gz pine64-pinetab.scr dtbs/sunxi/sun50i-a64-pinetab.dtb
@@ -130,10 +130,17 @@ build/atf/sun50i_a64/bl31.bin: src/arm-trusted-firmware
 	@cd src/arm-trusted-firmware; make $(CROSS_FLAGS_BOOT) PLAT=sun50i_a64 bl31
 	@cp src/arm-trusted-firmware/build/sun50i_a64/release/bl31.bin "$@"
 
-u-boot-sunxi-with-spl.bin: build/atf/sun50i_a64/bl31.bin src/u-boot
+u-boot-sunxi-with-spl-pinephone.bin: build/atf/sun50i_a64/bl31.bin src/u-boot
 	@echo "MAKE  $@"
 	@mkdir -p build/u-boot/sun50i_a64
 	@BL31=../../../build/atf/sun50i_a64/bl31.bin $(MAKE) -C src/u-boot O=../../build/u-boot/sun50i_a64 $(CROSS_FLAGS_BOOT) pinephone_defconfig
+	@BL31=../../../build/atf/sun50i_a64/bl31.bin $(MAKE) -C src/u-boot O=../../build/u-boot/sun50i_a64 $(CROSS_FLAGS_BOOT) ARCH=arm all
+	@cp build/u-boot/sun50i_a64/u-boot-sunxi-with-spl.bin "$@"
+
+u-boot-sunxi-with-spl-pinetab.bin: build/atf/sun50i_a64/bl31.bin src/u-boot
+	@echo "MAKE  $@"
+	@mkdir -p build/u-boot/sun50i_a64
+	@BL31=../../../build/atf/sun50i_a64/bl31.bin $(MAKE) -C src/u-boot O=../../build/u-boot/sun50i_a64 $(CROSS_FLAGS_BOOT) pinetab_defconfig
 	@BL31=../../../build/atf/sun50i_a64/bl31.bin $(MAKE) -C src/u-boot O=../../build/u-boot/sun50i_a64 $(CROSS_FLAGS_BOOT) ARCH=arm all
 	@cp build/u-boot/sun50i_a64/u-boot-sunxi-with-spl.bin "$@"
 
