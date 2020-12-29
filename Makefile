@@ -150,36 +150,55 @@ u-boot-rk3399.bin: build/atf/rk3399/bl31.elf src/u-boot
 	@BL31=../../../build/atf/rk3399/bl31.elf $(MAKE) -C src/u-boot O=../../build/u-boot/rk3399 $(CROSS_FLAGS_BOOT) all
 	@cp build/u-boot/rk3399/u-boot "$@"
 
-src/linux-rockchip:
+deps: linux-pinebook-pro-v5.6.tar.gz orange-pi-5.9-20201019-1553.tar.gz arm-trusted-firmware.tar.gz u-boot-2020.04.tar.bz2 busybox-1.32.0.tar.bz2
+
+src: deps src/linux-rockchip src/linux-sunxi src/arm-trusted-firmware src/u-boot src/busybox
+
+linux-pinebook-pro-v5.6.tar.gz:
 	@echo "WGET  linux-rockchip"
-	@mkdir src/linux-rockchip
 	@wget https://gitlab.manjaro.org/tsys/linux-pinebook-pro/-/archive/v5.6/linux-pinebook-pro-v5.6.tar.gz
-	@tar -xvf linux-pinebook-pro-v5.6.tar.gz --strip-components 1 -C src/linux-rockchip
 
-src/linux-sunxi:
+src/linux-rockchip: linux-pinebook-pro-v5.6.tar.gz
+	@echo "UNTAR linux-rockchip"
+	@mkdir src/linux-rockchip
+	@tar -xf linux-pinebook-pro-v5.6.tar.gz --strip-components 1 -C src/linux-rockchip
+
+orange-pi-5.9-20201019-1553.tar.gz:
 	@echo "WGET  linux-sunxi"
-	@mkdir src/linux-sunxi
 	@wget https://github.com/megous/linux/archive/orange-pi-5.9-20201019-1553.tar.gz
-	@tar -xvf orange-pi-5.9-20201019-1553.tar.gz --strip-components 1 -C src/linux-sunxi
 
-src/arm-trusted-firmware:
+src/linux-sunxi: orange-pi-5.9-20201019-1553.tar.gz
+	@echo "UNTAR linux-sunxi"
+	@mkdir src/linux-sunxi
+	@tar -xf orange-pi-5.9-20201019-1553.tar.gz --strip-components 1 -C src/linux-sunxi
+
+arm-trusted-firmware.tar.gz:
 	@echo "WGET  arm-trusted-firmware"
-	@mkdir src/arm-trusted-firmware
-	@wget https://github.com/ARM-software/arm-trusted-firmware/archive/50d8cf26dc57bb453b1a52be646140bfea4aa591.tar.gz
-	@tar -xvf 50d8cf26dc57bb453b1a52be646140bfea4aa591.tar.gz --strip-components 1 -C src/arm-trusted-firmware
+	@wget -O arm-trusted-firmware.tar.gz https://github.com/ARM-software/arm-trusted-firmware/archive/50d8cf26dc57bb453b1a52be646140bfea4aa591.tar.gz
 
-src/u-boot:
+src/arm-trusted-firmware: arm-trusted-firmware.tar.gz
+	@echo "UNTAR arm-trusted-firmware"
+	@mkdir src/arm-trusted-firmware
+	@tar -xf arm-trusted-firmware.tar.gz --strip-components 1 -C src/arm-trusted-firmware
+
+u-boot-2020.04.tar.bz2:
 	@echo "WGET  u-boot"
-	@mkdir src/u-boot
 	@wget ftp://ftp.denx.de/pub/u-boot/u-boot-2020.04.tar.bz2
-	@tar -xvf u-boot-2020.04.tar.bz2 --strip-components 1 -C src/u-boot
+
+src/u-boot: u-boot-2020.04.tar.bz2
+	@echo "UNTAR u-boot"
+	@mkdir src/u-boot
+	@tar -xf u-boot-2020.04.tar.bz2 --strip-components 1 -C src/u-boot
 	@cd src/u-boot && patch -p1 < ../u-boot-pinephone.patch
 
-src/busybox:
+busybox-1.32.0.tar.bz2:
 	@echo "WGET  busybox"
-	@mkdir src/busybox
 	@wget https://www.busybox.net/downloads/busybox-1.32.0.tar.bz2
-	@tar -xvf busybox-1.32.0.tar.bz2 --strip-components 1 -C src/busybox
+
+src/busybox: busybox-1.32.0.tar.bz2
+	@echo "UNTAR busybox"
+	@mkdir src/busybox
+	@tar -xf busybox-1.32.0.tar.bz2 --strip-components 1 -C src/busybox
 
 .PHONY: clean cleanfast
 
@@ -191,11 +210,15 @@ cleanfast:
 	@rm -vf *.apk
 	@rm -vf *.bin
 	@rm -vf *.cpio
-	@rm -vf *.gz
+	@rm -vf *.tar.gz
+	@rm -vf *.tar.bz2
 	@rm -vf *.scr
 	@rm -vf splash/*.gz
 
-clean: cleanfast
+cleansrc:
+	@rm -rf src/linux-rockchip src/linux-sunxi src/arm-trusted-firmware src/u-boot src/busybox
+
+clean: cleanfast cleansrc
 	@rm -vf kernel*.gz
 	@rm -vf initramfs/bin/busybox
 	@rm -vrf dtbs

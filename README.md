@@ -27,6 +27,9 @@ The dependencies are:
 - mtools
 
 ```shell-session
+$ make src
+Downloads & unpacks the projects to build
+
 $ make -j8 pine64-pinephone.img.xz
 Builds everything needed for the pinephone image...
 
