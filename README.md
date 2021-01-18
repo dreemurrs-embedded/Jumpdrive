@@ -18,6 +18,9 @@ Insert the SD card to the device, then boot it up, you should get a nice splash 
 
 With the device plugged in, you can now flash a distro, or fix a unbootable installation.
 
+**WARNING:**
+In case eMMC isn't showing up try to charge your battery and try again. There are reports of people not being able to flash to eMMC with discharged battery.
+
 ### Building
 
 The dependencies are:
