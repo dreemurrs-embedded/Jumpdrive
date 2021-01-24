@@ -1,4 +1,6 @@
 PLATFORM=pine64-pinephone
+MANUFACTURER=Pine64
+PRODUCT=PinePhone
 EMMC=/dev/mmcblk2
 SD=/dev/mmcblk0
 LED=pinephone\:red\:user

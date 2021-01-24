@@ -28,10 +28,10 @@ setup_usb_configfs() {
 	mkdir $CONFIGFS/g1/strings/0x409 || echo "  Couldn't create $CONFIGFS/g1/strings/0x409"
 
 	# shellcheck disable=SC2154
-	echo "Pine64" > "$CONFIGFS/g1/strings/0x409/manufacturer"
+	echo "$MANUFACTURER" > "$CONFIGFS/g1/strings/0x409/manufacturer"
 	echo "$usb_serialnumber"        > "$CONFIGFS/g1/strings/0x409/serialnumber"
 	# shellcheck disable=SC2154
-	echo "PinePhone"         > "$CONFIGFS/g1/strings/0x409/product"
+	echo "$PRODUCT"         > "$CONFIGFS/g1/strings/0x409/product"
 
 	# Create rndis/mass_storage function
 	mkdir $CONFIGFS/g1/functions/"$usb_rndis_function" \
