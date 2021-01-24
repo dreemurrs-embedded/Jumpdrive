@@ -40,6 +40,11 @@ if [ -n "$LED" ]; then
 	echo $TRIGGER > /sys/class/leds/$LED/trigger
 fi
 
+if [ -n "$SLEEP" ]; then
+  echo "Waiting for hardware to initialize..."
+  sleep $SLEEP
+fi
+
 # Create device nodes
 echo "Creating device nodes..."
 mknod /dev/null c 1 3
