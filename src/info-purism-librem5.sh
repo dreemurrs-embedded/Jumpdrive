@@ -1,0 +1,11 @@
+PLATFORM=purism-librem5
+MANUFACTURER=Purism
+PRODUCT="Librem 5"
+EMMC=/dev/mmcblk0
+SD=/dev/sda
+LED=green:status
+TRIGGER=mmc0
+ERRORLINES=80
+SERIAL_CON=ttymxc0
+SERIAL_BAUD=115200
+SLEEP=3

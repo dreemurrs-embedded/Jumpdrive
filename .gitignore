@@ -6,8 +6,10 @@
 /dtbs
 /src/linux-rockchip
 /src/linux-sunxi
+/src/linux-librem5
 /src/busybox
 /src/u-boot
+/src/u-boot-librem5
 /src/arm-trusted-firmware
 /*.scr
 /*.dtb

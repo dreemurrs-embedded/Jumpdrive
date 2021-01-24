@@ -120,6 +120,18 @@ kernel-rockchip.gz: src/linux_config_rockchip src/linux-rockchip
 	@cp build/linux-rockchip/arch/arm64/boot/Image.gz $@
 	@cp build/linux-rockchip/arch/arm64/boot/dts/rockchip/*.dtb dtbs/rockchip/
 
+kernel-librem5.gz: src/linux_config_librem5 src/linux-librem5
+	@echo "MAKE  $@"
+	@mkdir -p build/linux-librem5
+	@mkdir -p dtbs/librem5
+	@cp src/linux_config_librem5 build/linux-librem5/.config
+	@$(MAKE) -C src/linux-librem5 O=../../build/linux-librem5 $(CROSS_FLAGS) olddefconfig
+	@$(MAKE) -C src/linux-librem5 O=../../build/linux-librem5 $(CROSS_FLAGS)
+	@cp build/linux-librem5/arch/arm64/boot/Image.gz $@
+	@cp build/linux-librem5/arch/arm64/boot/dts/freescale/imx8mq-librem5*.dtb dtbs/librem5/
+
+dtbs/librem5/imx8mq-librem5-r4.dtb: kernel-librem5.gz
+
 %.scr: src/%.txt
 	@echo "MKIMG $@"
 	@mkimage -A arm -O linux -T script -C none -n "U-Boot boot script" -d $< $@
@@ -150,6 +162,12 @@ u-boot-rk3399.bin: build/atf/rk3399/bl31.elf src/u-boot
 	@BL31=../../../build/atf/rk3399/bl31.elf $(MAKE) -C src/u-boot O=../../build/u-boot/rk3399 $(CROSS_FLAGS_BOOT) all
 	@cp build/u-boot/rk3399/u-boot "$@"
 
+u-boot-librem5.bin: src/u-boot-librem5
+	@echo "MAKE  $@"
+	@mkdir -p build/u-boot/librem5
+	@cd build/u-boot/librem5 && ../../../src/u-boot-librem5/build_uboot.sh -b librem5
+	@cp build/u-boot/librem5/output/uboot-librem5/u-boot-librem5.imx $@
+
 src/linux-rockchip:
 	@echo "WGET  linux-rockchip"
 	@mkdir src/linux-rockchip
@@ -161,6 +179,12 @@ src/linux-sunxi:
 	@mkdir src/linux-sunxi
 	@wget https://github.com/megous/linux/archive/orange-pi-5.9-20201019-1553.tar.gz
 	@tar -xvf orange-pi-5.9-20201019-1553.tar.gz --strip-components 1 -C src/linux-sunxi
+
+src/linux-librem5:
+	@echo "WGET linux-librem5"
+	@mkdir src/linux-librem5
+	@wget -c https://source.puri.sm/Librem5/linux-next/-/archive/pureos/5.9.16+librem5.2/linux-next-pureos-5.9.16+librem5.2.tar.gz
+	@tar -xvf linux-next-pureos-5.9.16+librem5.2.tar.gz --strip-components 1 -C src/linux-librem5
 
 src/arm-trusted-firmware:
 	@echo "WGET  arm-trusted-firmware"
@@ -175,13 +199,22 @@ src/u-boot:
 	@tar -xvf u-boot-2020.04.tar.bz2 --strip-components 1 -C src/u-boot
 	@cd src/u-boot && patch -p1 < ../u-boot-pinephone.patch
 
+src/u-boot-librem5:
+	@echo "WGET  u-boot-librem5"
+	@mkdir src/u-boot-librem5
+	@wget https://source.puri.sm/Librem5/u-boot-builder/-/archive/3b1c7d957f46c87c6cdd71cd8dab7c84aca26570/u-boot-builder-3b1c7d957f46c87c6cdd71cd8dab7c84aca26570.tar.gz
+	@tar -xvf u-boot-builder-3b1c7d957f46c87c6cdd71cd8dab7c84aca26570.tar.gz --strip-components 1 -C src/u-boot-librem5
+
 src/busybox:
 	@echo "WGET  busybox"
 	@mkdir src/busybox
 	@wget https://www.busybox.net/downloads/busybox-1.32.0.tar.bz2
 	@tar -xvf busybox-1.32.0.tar.bz2 --strip-components 1 -C src/busybox
 
-.PHONY: clean cleanfast
+.PHONY: clean cleanfast librem5
+
+librem5: initramfs-purism-librem5.gz kernel-librem5.gz u-boot-librem5.bin src/purism-librem5.txt dtbs/librem5/imx8mq-librem5-r4.dtb
+	@echo 'All done! Switch your phone into flashing mode and run Jumpdrive with `uuu src/purism-librem5.txt`'
 
 cleanfast:
 	@rm -rvf build
