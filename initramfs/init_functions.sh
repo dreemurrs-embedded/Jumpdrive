@@ -73,8 +73,12 @@ setup_usb_configfs() {
 		fatal_error "No USB Device Controller available"
 	fi
 
+	if [ -z "$UDC" ]; then
+		UDC="$(ls /sys/class/udc)"
+	fi
+
 	# shellcheck disable=SC2005
-	echo "$(ls /sys/class/udc)" > $CONFIGFS/g1/UDC || ( fatal_error "Couldn't write to UDC" )
+	echo "$UDC" > $CONFIGFS/g1/UDC || ( fatal_error "Couldn't write to UDC" )
 }
 
 setup_telnetd() {
