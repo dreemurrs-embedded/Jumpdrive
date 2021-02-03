@@ -211,9 +211,9 @@ src/busybox:
 	@wget https://www.busybox.net/downloads/busybox-1.32.0.tar.bz2
 	@tar -xvf busybox-1.32.0.tar.bz2 --strip-components 1 -C src/busybox
 
-.PHONY: clean cleanfast librem5
+.PHONY: clean cleanfast purism-librem5
 
-librem5: initramfs-purism-librem5.gz kernel-librem5.gz u-boot-librem5.bin src/purism-librem5.txt dtbs/librem5/imx8mq-librem5-r4.dtb
+purism-librem5: initramfs-purism-librem5.gz kernel-librem5.gz u-boot-librem5.bin src/purism-librem5.txt dtbs/librem5/imx8mq-librem5-r4.dtb
 	@echo 'All done! Switch your phone into flashing mode and run Jumpdrive with `uuu src/purism-librem5.txt`'
 
 cleanfast:
