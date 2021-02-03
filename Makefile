@@ -1,7 +1,7 @@
 CROSS_FLAGS = ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu-
 CROSS_FLAGS_BOOT = CROSS_COMPILE=aarch64-linux-gnu-
 
-all: pine64-pinephone.img.xz pine64-pinetab.img.xz
+all: pine64-pinephone.img.xz pine64-pinetab.img.xz purism-librem5.tar.xz
 
 
 pine64-pinephone.img: fat-pine64-pinephone.img u-boot-sunxi-with-spl.bin
