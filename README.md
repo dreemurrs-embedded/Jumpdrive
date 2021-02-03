@@ -29,6 +29,10 @@ The dependencies are:
 - u-boot tools
 - mtools
 
+Additional dependencies for the Purism Librem 5:
+- arm-none-eabi- toolchain
+- uuu
+
 ```shell-session
 $ git submodule update --init --recursive
 Downloads the projects to build
