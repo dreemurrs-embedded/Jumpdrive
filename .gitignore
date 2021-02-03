@@ -17,4 +17,7 @@
 /*.gz
 /*.bin
 /*.tar.bz2
+/*.tar.xz
+/*.lst
+/boot-purism-librem5.sh
 /splash/*.gz
