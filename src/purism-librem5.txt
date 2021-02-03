@@ -2,26 +2,26 @@ uuu_version 1.0.1
 CFG: FB:  -vid 0x316d -pid 0x4c05
 CFG: SDP: -chip MX8MQ -compatible MX8MQ -vid 0x316d -pid 0x4c05
 
-SDP: boot -f ../u-boot-librem5.bin
+SDP: boot -f u-boot-librem5.bin
 SDPU: delay 1000
-SDPU: write -f ../u-boot-librem5.bin -offset 0x57c00
+SDPU: write -f u-boot-librem5.bin -offset 0x57c00
 SDPU: jump
 
 SDPV: delay 1000
-SDPV: write -f ../u-boot-librem5.bin -skipspl
+SDPV: write -f u-boot-librem5.bin -skipspl
 SDPV: jump
 
-SDPS: boot -f ../u-boot-librem5.bin
+SDPS: boot -f u-boot-librem5.bin
 SDPS: delay 1000
 
 FB: ucmd setenv bootargs console=tty0 quiet loglevel=0 vt.global_cursor_default=0
 
 FB: ucmd setenv fastboot_buffer 0x40000000
-FB: download -f ../kernel-librem5.gz
+FB: download -f kernel-librem5.gz
 FB: ucmd setenv fastboot_buffer 0x44000000
-FB: download -f ../dtbs/librem5/imx8mq-librem5-r2.dtb
+FB: download -f dtbs/librem5/imx8mq-librem5-r2.dtb
 FB: ucmd setenv fastboot_buffer 0x44800000
-FB: download -f ../initramfs-purism-librem5.gz
+FB: download -f initramfs-purism-librem5.gz
 
 FB: ucmd unzip 0x40000000 0x41000000
 

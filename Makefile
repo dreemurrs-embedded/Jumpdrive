@@ -214,19 +214,28 @@ src/busybox:
 .PHONY: clean cleanfast purism-librem5
 
 purism-librem5: initramfs-purism-librem5.gz kernel-librem5.gz u-boot-librem5.bin src/purism-librem5.txt dtbs/librem5/imx8mq-librem5-r2.dtb
-	@echo 'All done! Switch your phone into flashing mode and run Jumpdrive with `uuu src/purism-librem5.txt`'
+	cp src/boot-purism-librem5.sh boot-purism-librem5.sh
+	cp src/purism-librem5.txt purism-librem5.lst
+	@echo 'All done! Switch your phone into flashing mode and run Jumpdrive with `./boot-purism-librem5.sh`'
+
+purism-librem5.tar.xz: purism-librem5
+	@echo "XZ    librem5 files"
+	@tar cJf $@ initramfs-purism-librem5.gz kernel-librem5.gz u-boot-librem5.bin purism-librem5.lst dtbs/librem5/imx8mq-librem5-r2.dtb boot-purism-librem5.sh
 
 cleanfast:
 	@rm -rvf build
 	@rm -rvf initramfs-*/
 	@rm -vf *.img
 	@rm -vf *.img.xz
+	@rm -vf *.tar.xz
 	@rm -vf *.apk
 	@rm -vf *.bin
 	@rm -vf *.cpio
 	@rm -vf *.gz
 	@rm -vf *.scr
 	@rm -vf splash/*.gz
+	@rm -vf *.lst
+	@rm -vf boot-purism-librem5.sh
 
 clean: cleanfast
 	@rm -vf kernel*.gz
