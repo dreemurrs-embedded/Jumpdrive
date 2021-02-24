@@ -1,6 +1,10 @@
 # Jumpdrive
 
-The swiss army knife of Pine64 devices (currently only Pinetab and PinePhone)
+A swiss army knife for mobile devices, currently supporting:
+
+- Pine64 PineTab
+- Pine64 PinePhone
+- Purism Librem 5
 
 You can use this to flash a image **directly to eMMC**, troubleshooting a broken system, and a lot more.
 
@@ -12,6 +16,9 @@ You can use this to flash a image **directly to eMMC**, troubleshooting a broken
 ### Installation
 Download the latest image for your device [here](https://github.com/dreemurrs-embedded/Jumpdrive/releases)
 
+
+#### PinePhone / PineTab
+
 Then use dd to flash the image to an SD card. Jumpdrive is pretty small, so there is no need for a large storage SD card.
 
 Insert the SD card to the device, then boot it up, you should get a nice splash screen and you should see a new storage device after you plug the device to USB.
@@ -20,6 +27,10 @@ With the device plugged in, you can now flash a distro, or fix a unbootable inst
 
 **WARNING:**
 In case eMMC isn't showing up try to charge your battery and try again. There are reports of people not being able to flash to eMMC with discharged battery.
+
+#### Librem 5
+
+Extract the downloaded JumpDrive release archive for the Librem 5, put the device into flash mode, then run the `boot-purism-librem5.sh` script from the release.
 
 ### Building
 
