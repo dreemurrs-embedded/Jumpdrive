@@ -195,7 +195,7 @@ src/arm-trusted-firmware:
 src/u-boot:
 	@echo "WGET  u-boot"
 	@mkdir src/u-boot
-	@wget ftp://ftp.denx.de/pub/u-boot/u-boot-2020.04.tar.bz2
+	@wget https://ftp.denx.de/pub/u-boot/u-boot-2020.04.tar.bz2
 	@tar -xvf u-boot-2020.04.tar.bz2 --strip-components 1 -C src/u-boot
 	@cd src/u-boot && patch -p1 < ../u-boot-pinephone.patch
 
