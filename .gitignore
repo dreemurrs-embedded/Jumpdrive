@@ -7,6 +7,7 @@
 /src/linux-rockchip
 /src/linux-sunxi
 /src/linux-librem5
+/src/linux-sdm845
 /src/busybox
 /src/u-boot
 /src/u-boot-librem5
@@ -15,6 +16,7 @@
 /*.dtb
 /*.img.xz
 /*.gz
+/*.gz-dtb
 /*.bin
 /*.tar.bz2
 /*.tar.xz

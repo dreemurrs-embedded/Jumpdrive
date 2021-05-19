@@ -5,6 +5,9 @@ A swiss army knife for mobile devices, currently supporting:
 - Pine64 PineTab
 - Pine64 PinePhone
 - Purism Librem 5
+- Xiaomi Pocophone F1
+- OnePlus 6
+- OnePlus 6T
 
 You can use this to flash a image **directly to eMMC**, troubleshooting a broken system, and a lot more.
 
@@ -32,6 +35,10 @@ In case eMMC isn't showing up try to charge your battery and try again. There ar
 
 Extract the downloaded JumpDrive release archive for the Librem 5, put the device into flash mode, then run the `boot-purism-librem5.sh` script from the release.
 
+### Xiaomi Pocophone F1 / OnePlus 6 / OnePlus 6T
+
+Boot the image using `fastboot boot`.
+
 ### Building
 
 The dependencies are:
@@ -43,6 +50,9 @@ The dependencies are:
 Additional dependencies for the Purism Librem 5:
 - arm-none-eabi- toolchain
 - uuu
+
+Additional dependencies for the Xiaomi Pocophone F1 / OnePlus 6 / OnePlus 6T:
+- mkbootimg
 
 ```shell-session
 $ git submodule update --init --recursive

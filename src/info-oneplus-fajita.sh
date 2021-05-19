@@ -1,0 +1,5 @@
+PLATFORM=oneplus-fajita
+MANUFACTURER=OnePlus
+PRODUCT="OnePlus 6T"
+EMMC=/dev/sda17
+SD=/dev/mmcblk0
