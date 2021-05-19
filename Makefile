@@ -229,8 +229,8 @@ src/linux-librem5:
 src/linux-sdm845:
 	@echo "WGET linux-sdm845"
 	@mkdir src/linux-sdm845
-	@wget -c https://gitlab.com/sdm845-mainline/sdm845-linux/-/archive/sdm845-stable/sdm845-linux-sdm845-stable.tar.gz
-	@tar -xvf sdm845-linux-sdm845-stable.tar.gz --strip-components 1 -C src/linux-sdm845
+	@wget -c https://gitlab.com/sdm845-mainline/sdm845-linux/-/archive/b7a1e57f78d690d02aff902114bf2f6ca978ecfe/sdm845-linux-b7a1e57f78d690d02aff902114bf2f6ca978ecfe.tar.gz
+	@tar -xvf sdm845-linux-b7a1e57f78d690d02aff902114bf2f6ca978ecfe.tar.gz --strip-components 1 -C src/linux-sdm845
 
 src/arm-trusted-firmware:
 	@echo "WGET  arm-trusted-firmware"
