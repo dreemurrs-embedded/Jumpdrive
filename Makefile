@@ -212,50 +212,50 @@ src/linux-rockchip:
 	@echo "WGET  linux-rockchip"
 	@mkdir src/linux-rockchip
 	@wget https://gitlab.manjaro.org/tsys/linux-pinebook-pro/-/archive/v5.6/linux-pinebook-pro-v5.6.tar.gz
-	@tar -xvf linux-pinebook-pro-v5.6.tar.gz --strip-components 1 -C src/linux-rockchip
+	@tar -xf linux-pinebook-pro-v5.6.tar.gz --strip-components 1 -C src/linux-rockchip
 
 src/linux-sunxi:
 	@echo "WGET  linux-sunxi"
 	@mkdir src/linux-sunxi
 	@wget https://github.com/megous/linux/archive/orange-pi-5.9-20201019-1553.tar.gz
-	@tar -xvf orange-pi-5.9-20201019-1553.tar.gz --strip-components 1 -C src/linux-sunxi
+	@tar -xf orange-pi-5.9-20201019-1553.tar.gz --strip-components 1 -C src/linux-sunxi
 
 src/linux-librem5:
 	@echo "WGET linux-librem5"
 	@mkdir src/linux-librem5
 	@wget -c https://source.puri.sm/Librem5/linux-next/-/archive/pureos/5.9.16+librem5.2/linux-next-pureos-5.9.16+librem5.2.tar.gz
-	@tar -xvf linux-next-pureos-5.9.16+librem5.2.tar.gz --strip-components 1 -C src/linux-librem5
+	@tar -xf linux-next-pureos-5.9.16+librem5.2.tar.gz --strip-components 1 -C src/linux-librem5
 
 src/linux-sdm845:
 	@echo "WGET linux-sdm845"
 	@mkdir src/linux-sdm845
 	@wget -c https://gitlab.com/sdm845-mainline/linux/-/archive/b7a1e57f78d690d02aff902114bf2f6ca978ecfe/linux-b7a1e57f78d690d02aff902114bf2f6ca978ecfe.tar.gz
-	@tar -xvf linux-b7a1e57f78d690d02aff902114bf2f6ca978ecfe.tar.gz --strip-components 1 -C src/linux-sdm845
+	@tar -xf linux-b7a1e57f78d690d02aff902114bf2f6ca978ecfe.tar.gz --strip-components 1 -C src/linux-sdm845
 
 src/arm-trusted-firmware:
 	@echo "WGET  arm-trusted-firmware"
 	@mkdir src/arm-trusted-firmware
 	@wget https://github.com/ARM-software/arm-trusted-firmware/archive/50d8cf26dc57bb453b1a52be646140bfea4aa591.tar.gz
-	@tar -xvf 50d8cf26dc57bb453b1a52be646140bfea4aa591.tar.gz --strip-components 1 -C src/arm-trusted-firmware
+	@tar -xf 50d8cf26dc57bb453b1a52be646140bfea4aa591.tar.gz --strip-components 1 -C src/arm-trusted-firmware
 
 src/u-boot:
 	@echo "WGET  u-boot"
 	@mkdir src/u-boot
 	@wget https://ftp.denx.de/pub/u-boot/u-boot-2020.04.tar.bz2
-	@tar -xvf u-boot-2020.04.tar.bz2 --strip-components 1 -C src/u-boot
+	@tar -xf u-boot-2020.04.tar.bz2 --strip-components 1 -C src/u-boot
 	@cd src/u-boot && patch -p1 < ../u-boot-pinephone.patch
 
 src/u-boot-librem5:
 	@echo "WGET  u-boot-librem5"
 	@mkdir src/u-boot-librem5
 	@wget https://source.puri.sm/Librem5/u-boot-builder/-/archive/3b1c7d957f46c87c6cdd71cd8dab7c84aca26570/u-boot-builder-3b1c7d957f46c87c6cdd71cd8dab7c84aca26570.tar.gz
-	@tar -xvf u-boot-builder-3b1c7d957f46c87c6cdd71cd8dab7c84aca26570.tar.gz --strip-components 1 -C src/u-boot-librem5
+	@tar -xf u-boot-builder-3b1c7d957f46c87c6cdd71cd8dab7c84aca26570.tar.gz --strip-components 1 -C src/u-boot-librem5
 
 src/busybox:
 	@echo "WGET  busybox"
 	@mkdir src/busybox
 	@wget https://www.busybox.net/downloads/busybox-1.32.0.tar.bz2
-	@tar -xvf busybox-1.32.0.tar.bz2 --strip-components 1 -C src/busybox
+	@tar -xf busybox-1.32.0.tar.bz2 --strip-components 1 -C src/busybox
 
 .PHONY: clean cleanfast purism-librem5
 
