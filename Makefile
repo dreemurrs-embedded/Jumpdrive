@@ -1,7 +1,7 @@
 CROSS_FLAGS = ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu-
 CROSS_FLAGS_BOOT = CROSS_COMPILE=aarch64-linux-gnu-
 
-all: pine64-pinephone.img.xz pine64-pinetab.img.xz purism-librem5.tar.xz
+all: pine64-pinephone.img.xz pine64-pinetab.img.xz purism-librem5.tar.xz boot-xiaomi-beryllium-tianma.img boot-xiaomi-beryllium-ebbg.img boot-oneplus-enchilada.img boot-oneplus-fajita.img
 
 
 pine64-pinephone.img: fat-pine64-pinephone.img u-boot-sunxi-with-spl.bin
@@ -66,6 +66,28 @@ fat-pine64-pinebookpro.img: initramfs-pine64-pinebookpro.gz kernel-rockchip.gz s
 	@mcopy -i $@ initramfs-pine64-pinebookpro.gz ::initramfs.gz
 	@mmd   -i $@ extlinux
 	@mcopy -i $@ src/pine64-pinebookpro.conf ::extlinux/extlinux.conf
+
+kernel-xiaomi-beryllium-tianma.gz-dtb: kernel-sdm845.gz dtbs/sdm845/sdm845-xiaomi-beryllium-tianma.dtb
+	cat kernel-sdm845.gz dtbs/sdm845/sdm845-xiaomi-beryllium-tianma.dtb > $@
+
+kernel-xiaomi-beryllium-ebbg.gz-dtb: kernel-sdm845.gz dtbs/sdm845/sdm845-xiaomi-beryllium-ebbg.dtb
+	cat kernel-sdm845.gz dtbs/sdm845/sdm845-xiaomi-beryllium-ebbg.dtb > $@
+
+kernel-oneplus-enchilada.gz-dtb: kernel-sdm845.gz dtbs/sdm845/sdm845-oneplus-enchilada.dtb
+	cat kernel-sdm845.gz dtbs/sdm845/sdm845-oneplus-enchilada.dtb > $@
+
+kernel-oneplus-fajita.gz-dtb: kernel-sdm845.gz dtbs/sdm845/sdm845-oneplus-fajita.dtb
+	cat kernel-sdm845.gz dtbs/sdm845/sdm845-oneplus-fajita.dtb > $@
+
+boot-%.img: initramfs-%.gz kernel-%.gz-dtb
+	rm -f $@
+	$(eval BASE := $(shell cat src/deviceinfo_$* | grep base | cut -d "\"" -f 2))
+	$(eval SECOND := $(shell cat src/deviceinfo_$* | grep second | cut -d "\"" -f 2))
+	$(eval KERNEL := $(shell cat src/deviceinfo_$* | grep kernel | cut -d "\"" -f 2))
+	$(eval RAMDISK := $(shell cat src/deviceinfo_$* | grep ramdisk | cut -d "\"" -f 2))
+	$(eval TAGS := $(shell cat src/deviceinfo_$* | grep tags | cut -d "\"" -f 2))
+	$(eval PAGESIZE := $(shell cat src/deviceinfo_$* | grep pagesize | cut -d "\"" -f 2))
+	mkbootimg --kernel kernel-$*.gz-dtb --ramdisk initramfs-$*.gz --base $(BASE) --second_offset $(SECOND) --kernel_offset $(KERNEL) --ramdisk_offset $(RAMDISK) --tags_offset $(TAGS) --pagesize $(PAGESIZE) -o $@
 
 %.img.xz: %.img
 	@echo "XZ    $@"
@@ -132,6 +154,24 @@ kernel-librem5.gz: src/linux_config_librem5 src/linux-librem5
 
 dtbs/librem5/imx8mq-librem5-r2.dtb: kernel-librem5.gz
 
+kernel-sdm845.gz: src/linux-sdm845
+	@echo "MAKE  $@"
+	@mkdir -p build/linux-sdm845
+	@mkdir -p dtbs/sdm845
+	@$(MAKE) -C src/linux-sdm845 O=../../build/linux-sdm845 $(CROSS_FLAGS) defconfig sdm845.config
+	@printf "CONFIG_USB_ETH=n" >> build/linux-sdm845/.config
+	@$(MAKE) -C src/linux-sdm845 O=../../build/linux-sdm845 $(CROSS_FLAGS)
+	@cp build/linux-sdm845/arch/arm64/boot/Image.gz $@
+	@cp build/linux-sdm845/arch/arm64/boot/dts/qcom/sdm845-{xiaomi-beryllium-*,oneplus-enchilada,oneplus-fajita}.dtb dtbs/sdm845/
+
+dtbs/sdm845/sdm845-xiaomi-beryllium-ebbg.dtb: kernel-sdm845.gz
+
+dtbs/sdm845/sdm845-xiaomi-beryllium-tianma.dtb: kernel-sdm845.gz
+
+dtbs/sdm845/sdm845-oneplus-enchilada.dtb: kernel-sdm845.gz
+
+dtbs/sdm845/sdm845-oneplus-fajita.dtb: kernel-sdm845.gz
+
 %.scr: src/%.txt
 	@echo "MKIMG $@"
 	@mkimage -A arm -O linux -T script -C none -n "U-Boot boot script" -d $< $@
@@ -172,44 +212,50 @@ src/linux-rockchip:
 	@echo "WGET  linux-rockchip"
 	@mkdir src/linux-rockchip
 	@wget https://gitlab.manjaro.org/tsys/linux-pinebook-pro/-/archive/v5.6/linux-pinebook-pro-v5.6.tar.gz
-	@tar -xvf linux-pinebook-pro-v5.6.tar.gz --strip-components 1 -C src/linux-rockchip
+	@tar -xf linux-pinebook-pro-v5.6.tar.gz --strip-components 1 -C src/linux-rockchip
 
 src/linux-sunxi:
 	@echo "WGET  linux-sunxi"
 	@mkdir src/linux-sunxi
 	@wget https://github.com/megous/linux/archive/orange-pi-5.9-20201019-1553.tar.gz
-	@tar -xvf orange-pi-5.9-20201019-1553.tar.gz --strip-components 1 -C src/linux-sunxi
+	@tar -xf orange-pi-5.9-20201019-1553.tar.gz --strip-components 1 -C src/linux-sunxi
 
 src/linux-librem5:
 	@echo "WGET linux-librem5"
 	@mkdir src/linux-librem5
 	@wget -c https://source.puri.sm/Librem5/linux-next/-/archive/pureos/5.9.16+librem5.2/linux-next-pureos-5.9.16+librem5.2.tar.gz
-	@tar -xvf linux-next-pureos-5.9.16+librem5.2.tar.gz --strip-components 1 -C src/linux-librem5
+	@tar -xf linux-next-pureos-5.9.16+librem5.2.tar.gz --strip-components 1 -C src/linux-librem5
+
+src/linux-sdm845:
+	@echo "WGET linux-sdm845"
+	@mkdir src/linux-sdm845
+	@wget -c https://gitlab.com/sdm845-mainline/linux/-/archive/b7a1e57f78d690d02aff902114bf2f6ca978ecfe/linux-b7a1e57f78d690d02aff902114bf2f6ca978ecfe.tar.gz
+	@tar -xf linux-b7a1e57f78d690d02aff902114bf2f6ca978ecfe.tar.gz --strip-components 1 -C src/linux-sdm845
 
 src/arm-trusted-firmware:
 	@echo "WGET  arm-trusted-firmware"
 	@mkdir src/arm-trusted-firmware
 	@wget https://github.com/ARM-software/arm-trusted-firmware/archive/50d8cf26dc57bb453b1a52be646140bfea4aa591.tar.gz
-	@tar -xvf 50d8cf26dc57bb453b1a52be646140bfea4aa591.tar.gz --strip-components 1 -C src/arm-trusted-firmware
+	@tar -xf 50d8cf26dc57bb453b1a52be646140bfea4aa591.tar.gz --strip-components 1 -C src/arm-trusted-firmware
 
 src/u-boot:
 	@echo "WGET  u-boot"
 	@mkdir src/u-boot
 	@wget https://ftp.denx.de/pub/u-boot/u-boot-2020.04.tar.bz2
-	@tar -xvf u-boot-2020.04.tar.bz2 --strip-components 1 -C src/u-boot
+	@tar -xf u-boot-2020.04.tar.bz2 --strip-components 1 -C src/u-boot
 	@cd src/u-boot && patch -p1 < ../u-boot-pinephone.patch
 
 src/u-boot-librem5:
 	@echo "WGET  u-boot-librem5"
 	@mkdir src/u-boot-librem5
 	@wget https://source.puri.sm/Librem5/u-boot-builder/-/archive/3b1c7d957f46c87c6cdd71cd8dab7c84aca26570/u-boot-builder-3b1c7d957f46c87c6cdd71cd8dab7c84aca26570.tar.gz
-	@tar -xvf u-boot-builder-3b1c7d957f46c87c6cdd71cd8dab7c84aca26570.tar.gz --strip-components 1 -C src/u-boot-librem5
+	@tar -xf u-boot-builder-3b1c7d957f46c87c6cdd71cd8dab7c84aca26570.tar.gz --strip-components 1 -C src/u-boot-librem5
 
 src/busybox:
 	@echo "WGET  busybox"
 	@mkdir src/busybox
 	@wget https://www.busybox.net/downloads/busybox-1.32.0.tar.bz2
-	@tar -xvf busybox-1.32.0.tar.bz2 --strip-components 1 -C src/busybox
+	@tar -xf busybox-1.32.0.tar.bz2 --strip-components 1 -C src/busybox
 
 .PHONY: clean cleanfast purism-librem5
 
@@ -232,6 +278,7 @@ cleanfast:
 	@rm -vf *.bin
 	@rm -vf *.cpio
 	@rm -vf *.gz
+	@rm -vf *.gz-dtb
 	@rm -vf *.scr
 	@rm -vf splash/*.gz
 	@rm -vf *.lst
