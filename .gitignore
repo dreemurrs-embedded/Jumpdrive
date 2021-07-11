@@ -5,10 +5,7 @@
 /build
 /dtbs
 /modules
-/src/linux-rockchip
-/src/linux-sunxi
-/src/linux-librem5
-/src/linux-sdm845
+/src/linux-*
 /src/busybox
 /src/u-boot
 /src/u-boot-librem5
@@ -22,5 +19,6 @@
 /*.tar.bz2
 /*.tar.xz
 /*.lst
+/*.zip
 /boot-purism-librem5.sh
 /splash/*.gz

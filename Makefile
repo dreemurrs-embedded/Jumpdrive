@@ -79,6 +79,9 @@ kernel-oneplus-enchilada.gz-dtb: kernel-sdm845.gz dtbs/sdm845/sdm845-oneplus-enc
 kernel-oneplus-fajita.gz-dtb: kernel-sdm845.gz dtbs/sdm845/sdm845-oneplus-fajita.dtb
 	cat kernel-sdm845.gz dtbs/sdm845/sdm845-oneplus-fajita.dtb > $@
 
+kernel-bq-paella.gz-dtb: kernel-msm8916.gz dtbs/msm8916/msm8916-longcheer-l8910.dtb
+	cat kernel-msm8916.gz dtbs/msm8916/msm8916-longcheer-l8910.dtb > $@
+
 boot-%.img: initramfs-%.gz kernel-%.gz-dtb
 	rm -f $@
 	$(eval BASE := $(shell cat src/deviceinfo_$* | grep base | cut -d "\"" -f 2))
@@ -172,6 +175,22 @@ dtbs/sdm845/sdm845-oneplus-enchilada.dtb: kernel-sdm845.gz
 
 dtbs/sdm845/sdm845-oneplus-fajita.dtb: kernel-sdm845.gz
 
+kernel-msm8916.gz: src/linux-msm8916
+	@echo "MAKE  $@"
+	@mkdir -p build/linux-msm8916
+	@mkdir -p dtbs/msm8916
+	@$(MAKE) -C src/linux-msm8916 O=../../build/linux-msm8916 $(CROSS_FLAGS) defconfig msm8916_defconfig pmos.config
+	@sed -i "s/=m/=y/g" build/linux-msm8916/.config
+	@printf "CONFIG_DRM_MSM=m\nCONFIG_USB_CONFIGFS_MASS_STORAGE=y\nCONFIG_DRM_DEBUG_MM=n" >> build/linux-msm8916/.config
+	@$(MAKE) -C src/linux-msm8916 O=../../build/linux-msm8916 $(CROSS_FLAGS)
+	@rm -rf modules/msm8916
+	@$(MAKE) -C src/linux-msm8916 O=../../build/linux-msm8916 modules_install INSTALL_MOD_PATH=../../modules/msm8916 $(CROSS_FLAGS)
+	@ln -sf msm8916 modules/bq-paella
+	@cp build/linux-msm8916/arch/arm64/boot/Image.gz $@
+	@cp build/linux-msm8916/arch/arm64/boot/dts/qcom/msm8916-longcheer-l8910.dtb dtbs/msm8916/
+
+dtbs/msm8916/msm8916-longcheer-l8910.dtb: kernel-msm8916.gz
+
 %.scr: src/%.txt
 	@echo "MKIMG $@"
 	@mkimage -A arm -O linux -T script -C none -n "U-Boot boot script" -d $< $@
@@ -231,6 +250,12 @@ src/linux-sdm845:
 	@mkdir src/linux-sdm845
 	@wget -c https://gitlab.com/sdm845-mainline/linux/-/archive/b7a1e57f78d690d02aff902114bf2f6ca978ecfe/linux-b7a1e57f78d690d02aff902114bf2f6ca978ecfe.tar.gz
 	@tar -xf linux-b7a1e57f78d690d02aff902114bf2f6ca978ecfe.tar.gz --strip-components 1 -C src/linux-sdm845
+
+src/linux-msm8916:
+	@echo "WGET linux-msm8916"
+	@mkdir src/linux-msm8916
+	@wget -c https://github.com/msm8916-mainline/linux/tarball/50c5c1d7b66e3dfb9e10b2be25435ba5bf2d04b5 -O linux-50c5c1d7b66e3dfb9e10b2be25435ba5bf2d04b5.tar.gz
+	@tar -xf linux-50c5c1d7b66e3dfb9e10b2be25435ba5bf2d04b5.tar.gz --strip-components 1 -C src/linux-msm8916
 
 src/arm-trusted-firmware:
 	@echo "WGET  arm-trusted-firmware"
