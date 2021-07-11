@@ -40,6 +40,8 @@ if [ -n "$LED" ]; then
 	echo $TRIGGER > /sys/class/leds/$LED/trigger
 fi
 
+load_modules
+
 if [ -n "$SLEEP" ]; then
   echo "Waiting for hardware to initialize..."
   sleep $SLEEP

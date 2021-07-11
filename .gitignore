@@ -4,6 +4,7 @@
 /initramfs-*
 /build
 /dtbs
+/modules
 /src/linux-rockchip
 /src/linux-sunxi
 /src/linux-librem5

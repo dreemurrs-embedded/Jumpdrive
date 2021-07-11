@@ -137,6 +137,10 @@ start_serial_getty() {
 	fi
 }
 
+load_modules() {
+	modprobe $MODULES
+}
+
 fatal_error() {
 	clear
 

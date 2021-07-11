@@ -104,14 +104,14 @@ splash/%.ppm.gz: splash/%.ppm
 	@echo "GZ    $@"
 	@gzip < $< > $@
 	
-initramfs-%.cpio: initramfs/bin/busybox initramfs/init initramfs/init_functions.sh splash/%.ppm.gz splash/%-error.ppm.gz
+initramfs-%.cpio: initramfs/bin/busybox initramfs/init initramfs/init_functions.sh splash/%.ppm.gz splash/%-error.ppm.gz kernel-%.gz-dtb
 	@echo "CPIO  $@"
 	@rm -rf initramfs-$*
 	@cp -r initramfs initramfs-$*
 	@cp src/info-$*.sh initramfs-$*/info.sh
 	@cp splash/$*.ppm.gz initramfs-$*/splash.ppm.gz
 	@cp splash/$*-error.ppm.gz initramfs-$*/error.ppm.gz
-	@cp src/info-$*.sh initramfs-$*/info.sh
+	@cp -r modules/$*/* initramfs-$*/
 	@cd initramfs-$*; find . | cpio -H newc -o > ../$@
 	
 initramfs-%.gz: initramfs-%.cpio
@@ -288,3 +288,4 @@ clean: cleanfast
 	@rm -vf kernel*.gz
 	@rm -vf initramfs/bin/busybox
 	@rm -vrf dtbs
+	@rm -vrf modules
