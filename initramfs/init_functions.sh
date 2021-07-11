@@ -49,18 +49,34 @@ setup_usb_configfs() {
 	echo "rndis" > $CONFIGFS/g1/configs/c.1/strings/0x409/configuration \
 		|| echo "  Couldn't write configration name"
 
-	# Make sure the node for the eMMC exists
-	if [ -z "$(ls $EMMC)" ]; then
-		fatal_error "$EMMC could not be opened, possible eMMC defect"
+	if [[ $EMMC != "" ]]; then
+		echo "Enabling eMMC '$EMMC'"
+		# Make sure the node for the eMMC exists
+		if [[ "$(ls $EMMC)" != "" ]]; then
+			echo "eMMC node exists"
+			# Set up mass storage to internal eMMC
+			echo $EMMC > $CONFIGFS/g1/functions/"$usb_mass_storage_function"/lun.0/file
+			# Rename the mass storage device
+			echo "JumpDrive eMMC" > $CONFIGFS/g1/functions/"$usb_mass_storage_function"/lun.0/inquiry_string
+		else
+			echo "eMMC node does not exists"
+			fatal_error "$EMMC could not be opened, possible eMMC defect"
+		fi
 	fi
 
-	# Set up mass storage to internal EMMC
-	echo $EMMC > $CONFIGFS/g1/functions/"$usb_mass_storage_function"/lun.0/file
-	echo $SD > $CONFIGFS/g1/functions/"$usb_mass_storage_function"/lun.1/file
-
-	# Rename the mass storage device
-	echo "JumpDrive eMMC" > $CONFIGFS/g1/functions/"$usb_mass_storage_function"/lun.0/inquiry_string
-	echo "JumpDrive microSD" > $CONFIGFS/g1/functions/"$usb_mass_storage_function"/lun.1/inquiry_string
+	if [[ $SD != "" ]]; then
+		echo "Enabling SD '$SD'"
+		# Make sure the node for the SD exists
+		if [[ "$(ls $SD)" != "" ]]; then
+			echo "SD node exists"
+			# Set up mass storage to SD
+			echo $SD > $CONFIGFS/g1/functions/"$usb_mass_storage_function"/lun.1/file
+			# Rename the mass storage device
+			echo "JumpDrive microSD" > $CONFIGFS/g1/functions/"$usb_mass_storage_function"/lun.1/inquiry_string
+		else
+			echo "SD node does not exists"
+		fi
+	fi
 
 	# Link the rndis/mass_storage instance to the configuration
 	ln -s $CONFIGFS/g1/functions/"$usb_rndis_function" $CONFIGFS/g1/configs/c.1 \
