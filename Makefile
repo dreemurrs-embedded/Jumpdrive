@@ -1,7 +1,7 @@
 CROSS_FLAGS = ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu-
 CROSS_FLAGS_BOOT = CROSS_COMPILE=aarch64-linux-gnu-
 
-all: pine64-pinephone.img.xz pine64-pinetab.img.xz purism-librem5.tar.xz boot-xiaomi-beryllium-tianma.img boot-xiaomi-beryllium-ebbg.img boot-oneplus-enchilada.img boot-oneplus-fajita.img
+all: pine64-pinephone.img.xz pine64-pinetab.img.xz purism-librem5.tar.xz boot-xiaomi-beryllium-tianma.img boot-xiaomi-beryllium-ebbg.img boot-oneplus-enchilada.img boot-oneplus-fajita.img boot-bq-paella.img
 
 
 pine64-pinephone.img: fat-pine64-pinephone.img u-boot-sunxi-with-spl.bin
