@@ -8,6 +8,7 @@ A swiss army knife for mobile devices, currently supporting:
 - Xiaomi Pocophone F1
 - OnePlus 6
 - OnePlus 6T
+- BQ Aquaris X5
 
 You can use this to flash a image **directly to eMMC**, troubleshooting a broken system, and a lot more.
 
@@ -37,6 +38,11 @@ Extract the downloaded JumpDrive release archive for the Librem 5, put the devic
 
 ### Xiaomi Pocophone F1 / OnePlus 6 / OnePlus 6T
 
+Boot the image using `fastboot boot`.
+
+### BQ Aquaris X5
+
+Install lk2nd from https://github.com/msm8916-mainline/lk2nd.
 Boot the image using `fastboot boot`.
 
 ### Building
