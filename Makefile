@@ -114,7 +114,7 @@ initramfs-%.cpio: initramfs/bin/busybox initramfs/init initramfs/init_functions.
 	@cp src/info-$*.sh initramfs-$*/info.sh
 	@cp splash/$*.ppm.gz initramfs-$*/splash.ppm.gz
 	@cp splash/$*-error.ppm.gz initramfs-$*/error.ppm.gz
-	@cp -r modules/$*/* initramfs-$*/
+	@cp -r modules/$*/* initramfs-$*/ 2>/dev/null || true
 	@cd initramfs-$*; find . | cpio -H newc -o > ../$@
 	
 initramfs-%.gz: initramfs-%.cpio
