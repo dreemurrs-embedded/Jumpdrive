@@ -35,29 +35,5 @@ mount -t configfs -o nodev,noexec,nosuid configfs /config
 mkdir -p /dev/pts
 mount -t devpts devpts /dev/pts
 
-# LED indicator for MMC r/w access
-if [ -n "$LED" ]; then
-	echo $TRIGGER > /sys/class/leds/$LED/trigger
-fi
-
-if [ -n "$SLEEP" ]; then
-  echo "Waiting for hardware to initialize..."
-  sleep $SLEEP
-fi
-
-# Create device nodes
-echo "Creating device nodes..."
-mknod /dev/null c 1 3
-mknod /dev/tty c 5 0
-mdev -s
-
-# Finishing rescue setup
-start_serial_getty
-setup_usb_configfs
-start_udhcpd
-setup_telnetd
-
-gzip -c -d splash.ppm.gz > /splash.ppm
-fbsplash -s /splash.ppm
-
+loop_charging
 loop_forever

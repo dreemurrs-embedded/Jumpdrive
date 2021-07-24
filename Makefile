@@ -16,15 +16,16 @@ pine64-pinephone.img: fat-pine64-pinephone.img u-boot-sunxi-with-spl.bin
 fat-pine64-pinephone.img: initramfs-pine64-pinephone.gz kernel-sunxi.gz pine64-pinephone.scr dtbs/sunxi/sun50i-a64-pinephone-1.2.dtb
 	@echo "MKFS  $@"
 	@rm -f $@
-	@truncate --size 40M $@
+	@truncate --size 50M $@
 	@mkfs.fat -F32 $@
 	
-	@mcopy -i $@ kernel-sunxi.gz ::Image.gz
-	@mcopy -i $@ dtbs/sunxi/sun50i-a64-pinephone-1.2.dtb ::sun50i-a64-pinephone-1.2.dtb
-	@mcopy -i $@ dtbs/sunxi/sun50i-a64-pinephone-1.1.dtb ::sun50i-a64-pinephone-1.1.dtb
-	@mcopy -i $@ dtbs/sunxi/sun50i-a64-pinephone-1.0.dtb ::sun50i-a64-pinephone-1.0.dtb
-	@mcopy -i $@ initramfs-pine64-pinephone.gz ::initramfs.gz
-	@mcopy -i $@ pine64-pinephone.scr ::boot.scr
+	mcopy -i $@ kernel-sunxi.gz ::Image.gz
+	mcopy -i $@ dtbs/sunxi/sun50i-a64-pinephone-1.2.dtb ::sun50i-a64-pinephone-1.2.dtb
+	mcopy -i $@ dtbs/sunxi/sun50i-a64-pinephone-1.1.dtb ::sun50i-a64-pinephone-1.1.dtb
+	mcopy -i $@ dtbs/sunxi/sun50i-a64-pinephone-1.0.dtb ::sun50i-a64-pinephone-1.0.dtb
+	mcopy -i $@ initramfs-pine64-pinephone.gz ::initramfs.gz
+	mcopy -i $@ pine64-pinephone.scr ::boot.scr
+	echo "OH NO"
 
 pine64-pinetab.img: fat-pine64-pinetab.img u-boot-sunxi-with-spl.bin
 	rm -f $@

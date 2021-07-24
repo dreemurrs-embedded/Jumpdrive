@@ -157,3 +157,21 @@ loop_forever() {
 		sleep 1
 	done
 }
+
+loop_charging() {
+	while true; do
+		echo 0 > /sys/class/backlight/*/brightness
+		level=`cat /sys/devices/platform/soc/1f03400.rsb/sunxi-rsb-3a3/axp20x-battery-power-supply/power_supply/axp20x-battery/capacity`
+		if [ "$level" -lt "50" ]; then
+		echo 1 > /sys/devices/platform/leds/leds/red:indicator/brightness
+		fi
+		if [ "$level" -gt "5" ]; then
+		echo 1 > /sys/devices/platform/leds/leds/green:indicator/brightness
+		fi
+		sleep 1
+		echo 0 > /sys/devices/platform/leds/leds/red:indicator/brightness
+		echo 0 > /sys/devices/platform/leds/leds/green:indicator/brightness
+		echo 0 > /sys/devices/platform/leds/leds/blue:indicator/brightness
+		sleep 1
+	done
+}
