@@ -181,7 +181,8 @@ kernel-msm8916.gz: src/linux-msm8916
 	@mkdir -p dtbs/msm8916
 	@$(MAKE) -C src/linux-msm8916 O=../../build/linux-msm8916 $(CROSS_FLAGS) defconfig msm8916_defconfig pmos.config
 	@sed -i "s/=m/=y/g" build/linux-msm8916/.config
-	@printf "CONFIG_DRM_MSM=m\nCONFIG_USB_CONFIGFS_MASS_STORAGE=y\nCONFIG_DRM_DEBUG_MM=n" >> build/linux-msm8916/.config
+	@printf "CONFIG_DRM_MSM=m\nCONFIG_USB_CONFIGFS_MASS_STORAGE=y" >> build/linux-msm8916/.config
+	@$(MAKE) -C src/linux-msm8916 O=../../build/linux-msm8916 $(CROSS_FLAGS) olddefconfig
 	@$(MAKE) -C src/linux-msm8916 O=../../build/linux-msm8916 $(CROSS_FLAGS)
 	@rm -rf modules/msm8916
 	@$(MAKE) -C src/linux-msm8916 O=../../build/linux-msm8916 modules_install INSTALL_MOD_PATH=../../modules/msm8916 $(CROSS_FLAGS)
