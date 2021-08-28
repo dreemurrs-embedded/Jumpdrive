@@ -15,6 +15,7 @@ setup_usb_configfs() {
 	usb_idVendor="0x1209" # Generic
 	usb_idProduct="0x4201" # Random ID
 	usb_serialnumber="Jumpdrive"
+	usb_acm_function="acm.GS0"
 	usb_rndis_function="rndis.usb0"
 	usb_mass_storage_function="mass_storage.0"
 
@@ -33,7 +34,9 @@ setup_usb_configfs() {
 	# shellcheck disable=SC2154
 	echo "$PRODUCT"         > "$CONFIGFS/g1/strings/0x409/product"
 
-	# Create rndis/mass_storage function
+	# Create acm/rndis/mass_storage function
+	mkdir $CONFIGFS/g1/functions/"$usb_acm_function" \
+		|| echo "  Couldn't create $CONFIGFS/g1/functions/$usb_acm_function"
 	mkdir $CONFIGFS/g1/functions/"$usb_rndis_function" \
 		|| echo "  Couldn't create $CONFIGFS/g1/functions/$usb_rndis_function"
 	mkdir $CONFIGFS/g1/functions/"$usb_mass_storage_function" \
@@ -46,7 +49,7 @@ setup_usb_configfs() {
 		|| echo "  Couldn't create $CONFIGFS/g1/configs/c.1"
 	mkdir $CONFIGFS/g1/configs/c.1/strings/0x409 \
 		|| echo "  Couldn't create $CONFIGFS/g1/configs/c.1/strings/0x409"
-	echo "rndis" > $CONFIGFS/g1/configs/c.1/strings/0x409/configuration \
+	echo "acm + rndis" > $CONFIGFS/g1/configs/c.1/strings/0x409/configuration \
 		|| echo "  Couldn't write configration name"
 
 	# Make sure the node for the eMMC exists
@@ -62,7 +65,9 @@ setup_usb_configfs() {
 	echo "JumpDrive eMMC" > $CONFIGFS/g1/functions/"$usb_mass_storage_function"/lun.0/inquiry_string
 	echo "JumpDrive microSD" > $CONFIGFS/g1/functions/"$usb_mass_storage_function"/lun.1/inquiry_string
 
-	# Link the rndis/mass_storage instance to the configuration
+	# Link the acm/rndis/mass_storage instance to the configuration
+	ln -s $CONFIGFS/g1/functions/"$usb_acm_function" $CONFIGFS/g1/configs/c.1 \
+		|| echo "  Couldn't symlink $usb_acm_function"
 	ln -s $CONFIGFS/g1/functions/"$usb_rndis_function" $CONFIGFS/g1/configs/c.1 \
 		|| echo "  Couldn't symlink $usb_rndis_function"
 	ln -s $CONFIGFS/g1/functions/"$usb_mass_storage_function" $CONFIGFS/g1/configs/c.1 \

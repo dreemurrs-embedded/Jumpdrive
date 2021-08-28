@@ -52,8 +52,8 @@ mknod /dev/tty c 5 0
 mdev -s
 
 # Finishing rescue setup
-start_serial_getty
 setup_usb_configfs
+start_serial_getty
 start_udhcpd
 setup_telnetd
 
