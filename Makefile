@@ -13,13 +13,13 @@ pine64-pinephone.img: fat-pine64-pinephone.img u-boot-sunxi-with-spl.bin
 	dd if=u-boot-sunxi-with-spl.bin of=$@ bs=8k seek=1
 	dd if=fat-$@ of=$@ seek=1024 bs=1k
 
-fat-pine64-pinephone.img: initramfs-pine64-pinephone.gz kernel-sunxi.gz pine64-pinephone.scr dtbs/sunxi/sun50i-a64-pinephone-1.2.dtb
+fat-pine64-pinephone.img: initramfs-pine64-pinephone.gz kernel-pine64-pinephone.gz pine64-pinephone.scr dtbs/sunxi/sun50i-a64-pinephone-1.2.dtb
 	@echo "MKFS  $@"
 	@rm -f $@
 	@truncate --size 40M $@
 	@mkfs.fat -F32 $@
 	
-	@mcopy -i $@ kernel-sunxi.gz ::Image.gz
+	@mcopy -i $@ kernel-pine64-pinephone.gz ::Image.gz
 	@mcopy -i $@ dtbs/sunxi/sun50i-a64-pinephone-1.2.dtb ::sun50i-a64-pinephone-1.2.dtb
 	@mcopy -i $@ dtbs/sunxi/sun50i-a64-pinephone-1.1.dtb ::sun50i-a64-pinephone-1.1.dtb
 	@mcopy -i $@ dtbs/sunxi/sun50i-a64-pinephone-1.0.dtb ::sun50i-a64-pinephone-1.0.dtb
@@ -35,13 +35,13 @@ pine64-pinetab.img: fat-pine64-pinetab.img u-boot-sunxi-with-spl.bin
 	dd if=u-boot-sunxi-with-spl.bin of=$@ bs=8k seek=1
 	dd if=fat-$@ of=$@ seek=1024 bs=1k
 
-fat-pine64-pinetab.img: initramfs-pine64-pinetab.gz kernel-sunxi.gz pine64-pinetab.scr dtbs/sunxi/sun50i-a64-pinetab.dtb
+fat-pine64-pinetab.img: initramfs-pine64-pinetab.gz kernel-pine64-pinetab.gz pine64-pinetab.scr dtbs/sunxi/sun50i-a64-pinetab.dtb
 	@echo "MKFS  $@"
 	@rm -f $@
 	@truncate --size 40M $@
 	@mkfs.fat -F32 $@
 	
-	@mcopy -i $@ kernel-sunxi.gz ::Image.gz
+	@mcopy -i $@ kernel-pine64-pinetab.gz ::Image.gz
 	@mcopy -i $@ dtbs/sunxi/sun50i-a64-pinetab.dtb ::sun50i-a64-pinetab.dtb
 	@mcopy -i $@ initramfs-pine64-pinetab.gz ::initramfs.gz
 	@mcopy -i $@ pine64-pinetab.scr ::boot.scr
@@ -67,22 +67,31 @@ fat-pine64-pinebookpro.img: initramfs-pine64-pinebookpro.gz kernel-rockchip.gz s
 	@mmd   -i $@ extlinux
 	@mcopy -i $@ src/pine64-pinebookpro.conf ::extlinux/extlinux.conf
 
-kernel-xiaomi-beryllium-tianma.gz-dtb: kernel-sdm845.gz dtbs/sdm845/sdm845-xiaomi-beryllium-tianma.dtb
+kernel-pine64-pinephone.gz: kernel-sunxi.gz
+	ln -sf $< $@
+
+kernel-pine64-pinetab.gz: kernel-sunxi.gz
+	ln -sf $< $@
+
+kernel-pine64-pinebookpro.gz: kernel-rockchip.gz
+	ln -sf $< $@
+
+kernel-xiaomi-beryllium-tianma.gz: kernel-sdm845.gz dtbs/sdm845/sdm845-xiaomi-beryllium-tianma.dtb
 	cat kernel-sdm845.gz dtbs/sdm845/sdm845-xiaomi-beryllium-tianma.dtb > $@
 
-kernel-xiaomi-beryllium-ebbg.gz-dtb: kernel-sdm845.gz dtbs/sdm845/sdm845-xiaomi-beryllium-ebbg.dtb
+kernel-xiaomi-beryllium-ebbg.gz: kernel-sdm845.gz dtbs/sdm845/sdm845-xiaomi-beryllium-ebbg.dtb
 	cat kernel-sdm845.gz dtbs/sdm845/sdm845-xiaomi-beryllium-ebbg.dtb > $@
 
-kernel-oneplus-enchilada.gz-dtb: kernel-sdm845.gz dtbs/sdm845/sdm845-oneplus-enchilada.dtb
+kernel-oneplus-enchilada.gz: kernel-sdm845.gz dtbs/sdm845/sdm845-oneplus-enchilada.dtb
 	cat kernel-sdm845.gz dtbs/sdm845/sdm845-oneplus-enchilada.dtb > $@
 
-kernel-oneplus-fajita.gz-dtb: kernel-sdm845.gz dtbs/sdm845/sdm845-oneplus-fajita.dtb
+kernel-oneplus-fajita.gz: kernel-sdm845.gz dtbs/sdm845/sdm845-oneplus-fajita.dtb
 	cat kernel-sdm845.gz dtbs/sdm845/sdm845-oneplus-fajita.dtb > $@
 
-kernel-bq-paella.gz-dtb: kernel-msm8916.gz dtbs/msm8916/msm8916-longcheer-l8910.dtb
+kernel-bq-paella.gz: kernel-msm8916.gz dtbs/msm8916/msm8916-longcheer-l8910.dtb
 	cat kernel-msm8916.gz dtbs/msm8916/msm8916-longcheer-l8910.dtb > $@
 
-boot-%.img: initramfs-%.gz kernel-%.gz-dtb
+boot-%.img: initramfs-%.gz kernel-%.gz
 	rm -f $@
 	$(eval BASE := $(shell cat src/deviceinfo_$* | grep base | cut -d "\"" -f 2))
 	$(eval SECOND := $(shell cat src/deviceinfo_$* | grep second | cut -d "\"" -f 2))
@@ -90,7 +99,7 @@ boot-%.img: initramfs-%.gz kernel-%.gz-dtb
 	$(eval RAMDISK := $(shell cat src/deviceinfo_$* | grep ramdisk | cut -d "\"" -f 2))
 	$(eval TAGS := $(shell cat src/deviceinfo_$* | grep tags | cut -d "\"" -f 2))
 	$(eval PAGESIZE := $(shell cat src/deviceinfo_$* | grep pagesize | cut -d "\"" -f 2))
-	mkbootimg --kernel kernel-$*.gz-dtb --ramdisk initramfs-$*.gz --base $(BASE) --second_offset $(SECOND) --kernel_offset $(KERNEL) --ramdisk_offset $(RAMDISK) --tags_offset $(TAGS) --pagesize $(PAGESIZE) --cmdline console=ttyMSM0,115200 -o $@
+	mkbootimg --kernel kernel-$*.gz --ramdisk initramfs-$*.gz --base $(BASE) --second_offset $(SECOND) --kernel_offset $(KERNEL) --ramdisk_offset $(RAMDISK) --tags_offset $(TAGS) --pagesize $(PAGESIZE) --cmdline console=ttyMSM0,115200 -o $@
 
 %.img.xz: %.img
 	@echo "XZ    $@"
@@ -107,7 +116,7 @@ splash/%.ppm.gz: splash/%.ppm
 	@echo "GZ    $@"
 	@gzip < $< > $@
 	
-initramfs-%.cpio: initramfs/bin/busybox initramfs/init initramfs/init_functions.sh splash/%.ppm.gz splash/%-error.ppm.gz kernel-%.gz-dtb
+initramfs-%.cpio: initramfs/bin/busybox initramfs/init initramfs/init_functions.sh splash/%.ppm.gz splash/%-error.ppm.gz kernel-%.gz
 	@echo "CPIO  $@"
 	@rm -rf initramfs-$*
 	@cp -r initramfs initramfs-$*
@@ -131,9 +140,9 @@ kernel-sunxi.gz: src/linux_config_sunxi src/linux-sunxi
 	@cp build/linux-sunxi/arch/arm64/boot/Image.gz kernel-sunxi.gz
 	@cp build/linux-sunxi/arch/arm64/boot/dts/allwinner/*.dtb dtbs/sunxi/
 
-dtbs/sunxi/sun50i-a64-pinephone-1.2.dtb: kernel-sunxi.gz
+dtbs/sunxi/sun50i-a64-pinephone-1.2.dtb: kernel-pine64-pinephone.gz
 
-dtbs/sunxi/sun50i-a64-pinetab.dtb: kernel-sunxi.gz
+dtbs/sunxi/sun50i-a64-pinetab.dtb: kernel-pine64-pinetab.gz
 
 kernel-rockchip.gz: src/linux_config_rockchip src/linux-rockchip
 	@echo "MAKE  $@"
@@ -145,7 +154,7 @@ kernel-rockchip.gz: src/linux_config_rockchip src/linux-rockchip
 	@cp build/linux-rockchip/arch/arm64/boot/Image.gz $@
 	@cp build/linux-rockchip/arch/arm64/boot/dts/rockchip/*.dtb dtbs/rockchip/
 
-kernel-librem5.gz: src/linux_config_librem5 src/linux-librem5
+kernel-purism-librem5.gz: src/linux_config_librem5 src/linux-librem5
 	@echo "MAKE  $@"
 	@mkdir -p build/linux-librem5
 	@mkdir -p dtbs/librem5
@@ -155,7 +164,7 @@ kernel-librem5.gz: src/linux_config_librem5 src/linux-librem5
 	@cp build/linux-librem5/arch/arm64/boot/Image.gz $@
 	@cp build/linux-librem5/arch/arm64/boot/dts/freescale/imx8mq-librem5*.dtb dtbs/librem5/
 
-dtbs/librem5/imx8mq-librem5-r2.dtb: kernel-librem5.gz
+dtbs/librem5/imx8mq-librem5-r2.dtb: kernel-purism-librem5.gz
 
 kernel-sdm845.gz: src/linux-sdm845
 	@echo "MAKE  $@"
@@ -285,14 +294,14 @@ src/busybox:
 
 .PHONY: clean cleanfast purism-librem5
 
-purism-librem5: initramfs-purism-librem5.gz kernel-librem5.gz u-boot-librem5.bin src/purism-librem5.txt dtbs/librem5/imx8mq-librem5-r2.dtb
+purism-librem5: initramfs-purism-librem5.gz kernel-purism-librem5.gz u-boot-librem5.bin src/purism-librem5.txt dtbs/librem5/imx8mq-librem5-r2.dtb
 	cp src/boot-purism-librem5.sh boot-purism-librem5.sh
 	cp src/purism-librem5.txt purism-librem5.lst
 	@echo 'All done! Switch your phone into flashing mode and run Jumpdrive with `./boot-purism-librem5.sh`'
 
 purism-librem5.tar.xz: purism-librem5
 	@echo "XZ    librem5 files"
-	@tar cJf $@ initramfs-purism-librem5.gz kernel-librem5.gz u-boot-librem5.bin purism-librem5.lst dtbs/librem5/imx8mq-librem5-r2.dtb boot-purism-librem5.sh
+	@tar cJf $@ initramfs-purism-librem5.gz kernel-purism-librem5.gz u-boot-librem5.bin purism-librem5.lst dtbs/librem5/imx8mq-librem5-r2.dtb boot-purism-librem5.sh
 
 telnet:
 	telnet 172.16.42.1
