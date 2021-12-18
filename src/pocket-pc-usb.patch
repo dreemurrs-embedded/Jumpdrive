@@ -1,0 +1,13 @@
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pocket-pc.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-pocket-pc.dts
+index d309fc49a50f..194a0ecb7895 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-pocket-pc.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pocket-pc.dts
+@@ -472,7 +472,7 @@ &uart3 {
+ };
+ 
+ &usb_otg {
+-	dr_mode = "otg";
++	dr_mode = "peripheral";
+ 	status = "okay";
+ };
+ 
