@@ -35,6 +35,10 @@ mount -t configfs -o nodev,noexec,nosuid configfs /config
 mkdir -p /dev/pts
 mount -t devpts devpts /dev/pts
 
+# add the debugfs
+mkdir /debug
+mount -t debugfs none /debug
+
 # LED indicator for MMC r/w access
 if [ -n "$LED" ]; then
 	echo $TRIGGER > /sys/class/leds/$LED/trigger
@@ -49,11 +53,19 @@ fi
 echo "Creating device nodes..."
 mknod /dev/null c 1 3
 mknod /dev/tty c 5 0
+# scan for devices
 mdev -s
+# listen for new device creation
+mdev -d
+
+# enable logging
+mkdir -p /var/log
+syslogd
+klogd
 
 # Finishing rescue setup
-start_serial_getty
 setup_usb_configfs
+start_serial_getty
 start_udhcpd
 setup_telnetd
 
