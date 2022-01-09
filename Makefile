@@ -1,7 +1,7 @@
 CROSS_FLAGS = ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu-
 CROSS_FLAGS_BOOT = CROSS_COMPILE=aarch64-linux-gnu-
 
-all: pine64-pinephone.img.xz pine64-pinetab.img.xz purism-librem5.tar.xz boot-xiaomi-beryllium-tianma.img boot-xiaomi-beryllium-ebbg.img boot-oneplus-enchilada.img boot-oneplus-fajita.img
+all: pine64-pinephone.img.xz pine64-pinetab.img.xz purism-librem5.tar.xz boot-xiaomi-beryllium-tianma.img boot-xiaomi-beryllium-ebbg.img boot-oneplus-enchilada.img boot-oneplus-fajita.img sourceparts-pocketpc.img.xz
 
 
 pine64-pinephone.img: fat-pine64-pinephone.img u-boot-sunxi-with-spl.bin
@@ -45,6 +45,26 @@ fat-pine64-pinetab.img: initramfs-pine64-pinetab.gz kernel-sunxi.gz pine64-pinet
 	@mcopy -i $@ dtbs/sunxi/sun50i-a64-pinetab.dtb ::sun50i-a64-pinetab.dtb
 	@mcopy -i $@ initramfs-pine64-pinetab.gz ::initramfs.gz
 	@mcopy -i $@ pine64-pinetab.scr ::boot.scr
+
+sourceparts-pocketpc.img: fat-sourceparts-pocketpc.img u-boot-sunxi-with-spl-pocketpc.bin
+	rm -f $@
+	truncate --size 50M $@
+	parted -s $@ mktable msdos
+	parted -s $@ mkpart primary fat32 2048s 100%
+	parted -s $@ set 1 boot on
+	dd if=u-boot-sunxi-with-spl-pocketpc.bin of=$@ bs=8k seek=1
+	dd if=fat-$@ of=$@ seek=1024 bs=1k
+
+fat-sourceparts-pocketpc.img: initramfs-sourceparts-pocketpc.gz kernel-pocketpc.gz sourceparts-pocketpc.scr dtbs/pocketpc/sun50i-a64-pocket-pc.dtb
+	@echo "MKFS  $@"
+	@rm -f $@
+	@truncate --size 40M $@
+	@mkfs.fat -F32 $@
+	
+	@mcopy -i $@ kernel-pocketpc.gz ::Image.gz
+	@mcopy -i $@ dtbs/pocketpc/sun50i-a64-pocket-pc.dtb ::sun50i-a64-pocketpc.dtb
+	@mcopy -i $@ initramfs-sourceparts-pocketpc.gz ::initramfs.gz
+	@mcopy -i $@ sourceparts-pocketpc.scr ::boot.scr
 
 pine64-pinebookpro.img: fat-pine64-pinebookpro.img u-boot-rk3399.bin
 	rm -f $@
@@ -117,6 +137,18 @@ initramfs-%.cpio: initramfs/bin/busybox initramfs/init initramfs/init_functions.
 initramfs-%.gz: initramfs-%.cpio
 	@echo "GZ    $@"
 	@gzip < $< > $@
+
+kernel-pocketpc.gz: src/linux_config_sunxi src/linux-pocketpc
+	@echo "MAKE  kernel-pocketpc.gz"
+	@mkdir -p build/linux-pocketpc
+	@mkdir -p dtbs/pocketpc
+	@cp src/linux_config_pocketpc build/linux-pocketpc/.config
+	@$(MAKE) -C src/linux-pocketpc O=../../build/linux-pocketpc $(CROSS_FLAGS) olddefconfig
+	@$(MAKE) -C src/linux-pocketpc O=../../build/linux-pocketpc $(CROSS_FLAGS)
+	@cp build/linux-pocketpc/arch/arm64/boot/Image.gz kernel-pocketpc.gz
+	@cp build/linux-pocketpc/arch/arm64/boot/dts/allwinner/*.dtb dtbs/pocketpc/
+
+dtbs/pocketpc/sun50i-a64-pocketp-c.dtb: kernel-pocketpc.gz
 	
 kernel-sunxi.gz: src/linux_config_sunxi src/linux-sunxi
 	@echo "MAKE  kernel-sunxi.gz"
@@ -189,6 +221,13 @@ u-boot-sunxi-with-spl.bin: build/atf/sun50i_a64/bl31.bin src/u-boot
 	@BL31=../../../build/atf/sun50i_a64/bl31.bin $(MAKE) -C src/u-boot O=../../build/u-boot/sun50i_a64 $(CROSS_FLAGS_BOOT) ARCH=arm all
 	@cp build/u-boot/sun50i_a64/u-boot-sunxi-with-spl.bin "$@"
 
+u-boot-sunxi-with-spl-pocketpc.bin: build/atf/sun50i_a64/bl31.bin src/u-boot-pocketpc
+	@echo "MAKE  $@"
+	@mkdir -p build/u-boot-pocketpc/sun50i_a64
+	@BL31=../../../build/atf/sun50i_a64/bl31.bin $(MAKE) -C src/u-boot-pocketpc O=../../build/u-boot-pocketpc/sun50i_a64 $(CROSS_FLAGS_BOOT) pocket_pc_defconfig
+	@BL31=../../../build/atf/sun50i_a64/bl31.bin $(MAKE) -C src/u-boot-pocketpc O=../../build/u-boot-pocketpc/sun50i_a64 $(CROSS_FLAGS_BOOT) ARCH=arm all
+	@cp build/u-boot-pocketpc/sun50i_a64/u-boot-sunxi-with-spl.bin "$@"
+
 build/atf/rk3399/bl31.elf: src/arm-trusted-firmware
 	@echo "MAKE  $@"
 	@mkdir -p build/atf/rk3399
@@ -220,6 +259,13 @@ src/linux-sunxi:
 	@wget https://github.com/megous/linux/archive/orange-pi-5.9-20201019-1553.tar.gz
 	@tar -xf orange-pi-5.9-20201019-1553.tar.gz --strip-components 1 -C src/linux-sunxi
 
+src/linux-pocketpc:
+	@echo "WGET  linux-pocketpc"
+	@mkdir src/linux-pocketpc
+	@wget https://github.com/PopcornComputer/PocketPC-Linux/archive/81a7953afc5cd1001b727701dc99625ec656160a.tar.gz
+	@tar -xf 81a7953afc5cd1001b727701dc99625ec656160a.tar.gz --strip-components 1 -C src/linux-pocketpc
+	@cd src/linux-pocketpc && patch -p1 < ../pocket-pc-usb.patch
+
 src/linux-librem5:
 	@echo "WGET linux-librem5"
 	@mkdir src/linux-librem5
@@ -250,6 +296,12 @@ src/u-boot-librem5:
 	@mkdir src/u-boot-librem5
 	@wget https://source.puri.sm/Librem5/u-boot-builder/-/archive/3b1c7d957f46c87c6cdd71cd8dab7c84aca26570/u-boot-builder-3b1c7d957f46c87c6cdd71cd8dab7c84aca26570.tar.gz
 	@tar -xf u-boot-builder-3b1c7d957f46c87c6cdd71cd8dab7c84aca26570.tar.gz --strip-components 1 -C src/u-boot-librem5
+
+src/u-boot-pocketpc:
+	@echo "WGET  u-boot-pocketpc"
+	@mkdir src/u-boot-pocketpc
+	@wget https://github.com/PopcornComputer/PocketPC-Uboot/archive/49694d39d856c9ab537c4f2ff1d0167f4e21d19b.tar.gz
+	@tar -xf 49694d39d856c9ab537c4f2ff1d0167f4e21d19b.tar.gz --strip-components 1 -C src/u-boot-pocketpc
 
 src/busybox:
 	@echo "WGET  busybox"

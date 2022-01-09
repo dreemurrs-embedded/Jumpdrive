@@ -6,10 +6,12 @@
 /dtbs
 /src/linux-rockchip
 /src/linux-sunxi
+/src/linux-pocketpc
 /src/linux-librem5
 /src/linux-sdm845
 /src/busybox
 /src/u-boot
+/src/u-boot-pocketpc
 /src/u-boot-librem5
 /src/arm-trusted-firmware
 /*.scr
