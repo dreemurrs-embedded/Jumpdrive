@@ -269,8 +269,8 @@ src/linux-pocketpc:
 src/linux-librem5:
 	@echo "WGET linux-librem5"
 	@mkdir src/linux-librem5
-	@wget -c https://source.puri.sm/Librem5/linux-next/-/archive/pureos/5.9.16+librem5.2/linux-next-pureos-5.9.16+librem5.2.tar.gz
-	@tar -xf linux-next-pureos-5.9.16+librem5.2.tar.gz --strip-components 1 -C src/linux-librem5
+	@wget -c https://source.puri.sm/Librem5/linux-next/-/archive/pureos/5.12.2pureos3/linux-next-pureos-5.12.2pureos3.tar.gz
+	@tar -xvf linux-next-pureos-5.12.2pureos3.tar.gz --strip-components 1 -C src/linux-librem5
 
 src/linux-sdm845:
 	@echo "WGET linux-sdm845"
