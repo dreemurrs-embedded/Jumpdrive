@@ -1,6 +1,7 @@
 /*.img
 /*.apk
 /initramfs/bin/busybox
+/initramfs/bin/mmc
 /initramfs-*
 /build
 /dtbs
@@ -10,6 +11,7 @@
 /src/linux-librem5
 /src/linux-sdm845
 /src/busybox
+/src/mmc-utils
 /src/u-boot
 /src/u-boot-pocketpc
 /src/u-boot-librem5

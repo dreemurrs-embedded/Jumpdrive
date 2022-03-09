@@ -58,9 +58,26 @@ setup_usb_configfs() {
 	echo $EMMC > $CONFIGFS/g1/functions/"$usb_mass_storage_function"/lun.0/file
 	echo $SD > $CONFIGFS/g1/functions/"$usb_mass_storage_function"/lun.1/file
 
+	if [ -n "$EMMC_BOOT" ]; then
+		echo "$EMMC_BOOT" > $CONFIGFS/g1/functions/"$usb_mass_storage_function"/lun.2/file
+	fi
+
 	# Rename the mass storage device
 	echo "JumpDrive eMMC" > $CONFIGFS/g1/functions/"$usb_mass_storage_function"/lun.0/inquiry_string
 	echo "JumpDrive microSD" > $CONFIGFS/g1/functions/"$usb_mass_storage_function"/lun.1/inquiry_string
+
+	if [ -n "$EMMC_BOOT" ]; then
+		echo "JumpDrive eMMC Boot" > $CONFIGFS/g1/functions/"$usb_mass_storage_function"/lun.2/inquiry_string
+
+		# Make sure the boot partitions are rw
+		for f in /sys/block/mmcblk*boot*/force_ro; do
+			echo 0 > "$f"
+		done
+
+		# Mark the boot partitions as bootable
+		mmc bootbus set single_hs x1 x4 "$EMMC_BOOT"
+		mmc bootpart enable 1 1 "$EMMC_BOOT"
+	fi
 
 	# Link the rndis/mass_storage instance to the configuration
 	ln -s $CONFIGFS/g1/functions/"$usb_rndis_function" $CONFIGFS/g1/configs/c.1 \

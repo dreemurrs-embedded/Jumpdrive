@@ -1,3 +1,4 @@
+CC = aarch64-linux-gnu-gcc
 CROSS_FLAGS = ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu-
 CROSS_FLAGS_BOOT = CROSS_COMPILE=aarch64-linux-gnu-
 
@@ -119,12 +120,18 @@ initramfs/bin/busybox: src/busybox src/busybox_config
 	@cp src/busybox_config build/busybox/.config
 	@$(MAKE) -C src/busybox O=../../build/busybox $(CROSS_FLAGS)
 	@cp build/busybox/busybox initramfs/bin/busybox
+
+initramfs/bin/mmc-utils: src/mmc-utils
+	@echo "MAKE  $@"
+	@mkdir -p build/mmc-utils
+	@$(MAKE) -C src/mmc-utils O=../../build/mmc-utils CFLAGS="-Wno-error -static" CC=$(CC)
+	@cp src/mmc-utils/mmc initramfs/bin/mmc
 	
 splash/%.ppm.gz: splash/%.ppm
 	@echo "GZ    $@"
 	@gzip < $< > $@
 	
-initramfs-%.cpio: initramfs/bin/busybox initramfs/init initramfs/init_functions.sh splash/%.ppm.gz splash/%-error.ppm.gz
+initramfs-%.cpio: initramfs/bin/busybox initramfs/bin/mmc-utils initramfs/init initramfs/init_functions.sh splash/%.ppm.gz splash/%-error.ppm.gz
 	@echo "CPIO  $@"
 	@rm -rf initramfs-$*
 	@cp -r initramfs initramfs-$*
@@ -308,6 +315,12 @@ src/busybox:
 	@mkdir src/busybox
 	@wget https://www.busybox.net/downloads/busybox-1.32.0.tar.bz2
 	@tar -xf busybox-1.32.0.tar.bz2 --strip-components 1 -C src/busybox
+
+src/mmc-utils:
+	@echo "WGET  mmc-utils"
+	@mkdir src/mmc-utils
+	@wget https://git.kernel.org/pub/scm/utils/mmc/mmc-utils.git/snapshot/mmc-utils-0eea71e4f22a837ed59e607743767df2d038825e.tar.gz
+	@tar -xf mmc-utils-0eea71e4f22a837ed59e607743767df2d038825e.tar.gz --strip-components 1 -C src/mmc-utils
 
 .PHONY: clean cleanfast purism-librem5
 
