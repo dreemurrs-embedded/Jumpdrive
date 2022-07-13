@@ -46,6 +46,10 @@ The dependencies are:
 - aarch64-linux-gnu- toolchain
 - u-boot tools
 - mtools
+- swig
+- dtc
+- cpio
+- bc
 
 Additional dependencies for the Purism Librem 5:
 - arm-none-eabi- toolchain
@@ -72,5 +76,6 @@ Generates an image for every supported platform in parallel
 - [Busybox](https://busybox.net) - which is [GPLv2](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html).
 - [postmarketOS](https://postmarketos.org) scripts - which is [GPLv2](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html).
 - [Pine64's kernel fork](https://gitlab.com/pine64-org/linux) - which is [GPLv2](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html).
-- [U-Boot](https://github.com/u-boot/u-boot) - which has [multiple licenses](https://github.com/u-boot/u-boot/tree/master/Licenses)
+- [U-Boot](https://github.com/u-boot/u-boot) - which has [multiple licenses](https://github.com/u-boot/u-boot/tree/master/Licenses).
+- [mmc-utils](https://www.kernel.org/doc/html/latest/driver-api/mmc/mmc-tools.html) - which is [GPLv2](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html).
 

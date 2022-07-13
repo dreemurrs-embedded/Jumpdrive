@@ -2,6 +2,7 @@ PLATFORM=pine64-pinephone
 MANUFACTURER=Pine64
 PRODUCT=PinePhone
 EMMC=/dev/mmcblk2
+EMMC_BOOT=/dev/mmcblk2boot1
 SD=/dev/mmcblk0
 LED=red\:indicator
 TRIGGER=mmc2
