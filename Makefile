@@ -296,6 +296,7 @@ src/u-boot-librem5:
 	@mkdir src/u-boot-librem5
 	@wget https://source.puri.sm/Librem5/u-boot-builder/-/archive/3b1c7d957f46c87c6cdd71cd8dab7c84aca26570/u-boot-builder-3b1c7d957f46c87c6cdd71cd8dab7c84aca26570.tar.gz
 	@tar -xf u-boot-builder-3b1c7d957f46c87c6cdd71cd8dab7c84aca26570.tar.gz --strip-components 1 -C src/u-boot-librem5
+	@cd src/u-boot-librem5 && patch -p1 < ../librem5-atf-bug.patch
 
 src/u-boot-pocketpc:
 	@echo "WGET  u-boot-pocketpc"

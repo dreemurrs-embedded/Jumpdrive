@@ -1,0 +1,18 @@
+diff --git a/build_uboot.sh b/build_uboot.sh
+index d9fb650..9a4b428 100755
+--- a/build_uboot.sh
++++ b/build_uboot.sh
+@@ -101,8 +101,13 @@ function build_atf()
+         git clone "${ATF_REPO}"
+     fi
+     cd "${ATF_DIR}"
++    git reset --hard
++    git clean -f -d
+     git checkout "${ATF_BRANCH}"
+ 
++    # Remove -Werror to workaround a compiler bug
++    sed -i 's/-Werror//g' Makefile
++
+     make PLAT="${ATF_PLAT}" CROSS_COMPILE="${CROSS_COMPILER}"  bl31
+     
+     cd "${CWD}"
