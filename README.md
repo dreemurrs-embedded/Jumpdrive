@@ -9,7 +9,7 @@ A swiss army knife for mobile devices, currently supporting:
 - OnePlus 6
 - OnePlus 6T
 
-You can use this to flash a image **directly to eMMC**, troubleshooting a broken system, and a lot more.
+You can use this to flash an image **directly to eMMC**, troubleshoot a broken system, and a lot more.
 
 ### Table of Contents
 - [Installation](#installation)
@@ -29,7 +29,7 @@ Insert the SD card to the device, then boot it up, you should get a nice splash 
 With the device plugged in, you can now flash a distro, or fix a unbootable installation.
 
 **WARNING:**
-In case eMMC isn't showing up try to charge your battery and try again. There are reports of people not being able to flash to eMMC with discharged battery.
+In case eMMC isn't showing up try to charge your battery and try again. There are reports of people not being able to flash to eMMC with a discharged battery.
 
 #### Librem 5
 
