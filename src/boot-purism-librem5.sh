@@ -1,3 +1,4 @@
 #!/bin/sh
 
-uuu purism-librem5.lst
+REPOROOT="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
+uuu $REPOROOT/purism-librem5.lst
