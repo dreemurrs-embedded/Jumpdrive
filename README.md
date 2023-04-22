@@ -46,6 +46,28 @@ The dependencies are:
 - aarch64-linux-gnu- toolchain
 - u-boot tools
 - mtools
+- bison
+- flex
+- cpio
+- make
+- wget
+- swig
+- bc
+- python3
+- python3 distutils
+- parted
+- mkfs.fat
+- udev
+
+#### To install the build dependencies in Arch :
+```bash
+sudo pacman -S aarch64-linux-gnu-gcc uboot-tools mtools cpio bison flex make wget swig bc python python-distlib parted dosfstools
+```
+
+#### To install the build dependencies in Ubuntu/Debian :
+```bash
+sudo apt install gcc-aarch64-linux-gnu u-boot-tools mtools cpio bison flex make wget swig bc python3 python3-distutils parted dosfstools udev
+```
 
 Additional dependencies for the Purism Librem 5:
 - arm-none-eabi- toolchain
