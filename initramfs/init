@@ -57,7 +57,9 @@ setup_usb_configfs
 start_udhcpd
 setup_telnetd
 
-gzip -c -d splash.ppm.gz > /splash.ppm
-fbsplash -s /splash.ppm
+if ! [ "$SPLASH" = false ]; then
+	gzip -c -d splash.ppm.gz > /splash.ppm
+	fbsplash -s /splash.ppm
+fi
 
 loop_forever
