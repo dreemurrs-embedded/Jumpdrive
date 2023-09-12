@@ -8,6 +8,7 @@
 /src/linux-sunxi
 /src/linux-pocketpc
 /src/linux-librem5
+/src/linux-msm8916
 /src/linux-sdm845
 /src/busybox
 /src/u-boot
