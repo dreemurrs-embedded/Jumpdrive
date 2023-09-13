@@ -1,7 +1,17 @@
 CROSS_FLAGS = ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu-
 CROSS_FLAGS_BOOT = CROSS_COMPILE=aarch64-linux-gnu-
 
-all: pine64-pinephone.img.xz pine64-pinetab.img.xz purism-librem5.tar.xz boot-xiaomi-beryllium-tianma.img boot-xiaomi-beryllium-ebbg.img boot-oneplus-enchilada.img boot-oneplus-fajita.img sourceparts-pocketpc.img.xz
+MSM8916_UFI = thwc-uf896 thwc-ufi001c yiming-uz801v3
+all: \
+	pine64-pinephone.img.xz \
+	pine64-pinetab.img.xz \
+	purism-librem5.tar.xz \
+	$(foreach n,$(MSM8916_UFI),boot-$(n).img) \
+	boot-xiaomi-beryllium-tianma.img \
+	boot-xiaomi-beryllium-ebbg.img \
+	boot-oneplus-enchilada.img \
+	boot-oneplus-fajita.img \
+	sourceparts-pocketpc.img.xz
 
 
 pine64-pinephone.img: fat-pine64-pinephone.img u-boot-sunxi-with-spl.bin
@@ -87,6 +97,9 @@ fat-pine64-pinebookpro.img: initramfs-pine64-pinebookpro.gz kernel-rockchip.gz s
 	@mmd   -i $@ extlinux
 	@mcopy -i $@ src/pine64-pinebookpro.conf ::extlinux/extlinux.conf
 
+$(foreach n,$(MSM8916_UFI),kernel-$(n).gz-dtb): kernel-%.gz-dtb: kernel-msm8916.gz dtbs/msm8916/msm8916-%.dtb
+	cat $^ > $@
+
 kernel-xiaomi-beryllium-tianma.gz-dtb: kernel-sdm845.gz dtbs/sdm845/sdm845-xiaomi-beryllium-tianma.dtb
 	cat kernel-sdm845.gz dtbs/sdm845/sdm845-xiaomi-beryllium-tianma.dtb > $@
 
@@ -124,6 +137,14 @@ splash/%.ppm.gz: splash/%.ppm
 	@echo "GZ    $@"
 	@gzip < $< > $@
 	
+# UFI-series devices has no screen, skip splash setup
+$(foreach n,$(MSM8916_UFI),initramfs-$(n).cpio): initramfs-%.cpio: initramfs/bin/busybox initramfs/init initramfs/init_functions.sh
+	@echo "CPIO  $@"
+	@rm -rf initramfs-$*
+	@cp -r initramfs initramfs-$*
+	@cp src/info-$*.sh initramfs-$*/info.sh
+	@cd initramfs-$*; find . | cpio -H newc -o > ../$@
+
 initramfs-%.cpio: initramfs/bin/busybox initramfs/init initramfs/init_functions.sh splash/%.ppm.gz splash/%-error.ppm.gz
 	@echo "CPIO  $@"
 	@rm -rf initramfs-$*
@@ -185,6 +206,17 @@ kernel-librem5.gz: src/linux_config_librem5 src/linux-librem5
 	@cp build/linux-librem5/arch/arm64/boot/dts/freescale/imx8mq-librem5*.dtb dtbs/librem5/
 
 dtbs/librem5/imx8mq-librem5-r2.dtb: kernel-librem5.gz
+
+kernel-msm8916.gz: src/linux-msm8916 src/linux_config_msm8916
+	@echo "MAKE  $@"
+	@mkdir -p build/linux-msm8916
+	@mkdir -p dtbs/msm8916
+	@cp src/linux_config_msm8916 build/linux-msm8916/.config
+	@$(MAKE) -C src/linux-msm8916 O=../../build/linux-msm8916 $(CROSS_FLAGS) olddefconfig all
+	@cp build/linux-msm8916/arch/arm64/boot/Image.gz $@
+	@cp build/linux-msm8916/arch/arm64/boot/dts/qcom/msm8916*.dtb dtbs/msm8916/
+
+$(foreach n,$(MSM8916_UFI),dtbs/msm8916/msm8916-$(n).dtb): kernel-msm8916.gz
 
 kernel-sdm845.gz: src/linux-sdm845
 	@echo "MAKE  $@"
@@ -271,6 +303,12 @@ src/linux-librem5:
 	@mkdir src/linux-librem5
 	@wget -c https://source.puri.sm/Librem5/linux/-/archive/pureos/5.18.7pureos1/linux-pureos-5.18.7pureos1.tar.gz
 	@tar -xf linux-pureos-5.18.7pureos1.tar.gz --strip-components 1 -C src/linux-librem5
+
+src/linux-msm8916:
+	@echo "WGET linux-msm8916"
+	@mkdir src/linux-msm8916
+	@wget -c https://github.com/msm8916-mainline/linux/archive/v6.5.2-msm8916.tar.gz
+	@tar -xf v6.5.2-msm8916.tar.gz --strip-components 1 -C src/linux-msm8916
 
 src/linux-sdm845:
 	@echo "WGET linux-sdm845"
